@@ -5,8 +5,8 @@ import { MenuItemLink } from 'admin-on-rest';
 import PostIcon from 'material-ui/svg-icons/action/book';
 import UserIcon from 'material-ui/svg-icons/social/group';
 
-function cheese() {
-	console.log("baaah")
+function onTouchTapFn() {
+	// onTouchTap is required in a MenuItemLink - not sure why...
 }
 
 export default ({ resources, onMenuTap, logout }) => {
@@ -14,9 +14,9 @@ export default ({ resources, onMenuTap, logout }) => {
 	console.log("resources:", resources);
 	return (
 		<div>
-			<MenuItemLink to="/posts" primaryText="Posts" onTouchTap={cheese} icon={PostIcon}/>
+			<MenuItemLink to="/posts" primaryText="Posts" onTouchTap={onTouchTapFn} icon={PostIcon}/>
 			{isAdminUser &&
-				<MenuItemLink to="/users" primaryText="Users" onTouchTap={cheese} icon={UserIcon}/>
+				<MenuItemLink to="/users" primaryText="Users" onTouchTap={onTouchTapFn} icon={UserIcon}/>
 			}
 			{logout}
 		</div>

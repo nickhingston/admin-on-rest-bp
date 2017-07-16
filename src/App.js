@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { /*jsonServerRestClient,*/ Admin, Resource, Delete } from 'admin-on-rest';
+import Login from'./login';
 
 import Dashboard from './Dashboard';
 import authClient from './authClient';
@@ -25,7 +26,7 @@ const masterKey = process.env.REACT_APP_MASTER_KEY;
 const App = () => {
   //let isAdminUser = (localStorage.user ? JSON.parse(localStorage.user).role === 'admin': false);
   return(
-    <Admin authClient={authClient(apiUrl, masterKey)} dashboard={Dashboard} restClient={restClient(apiUrl)} menu={Menu}>
+    <Admin loginPage={Login} authClient={authClient(apiUrl, masterKey)} dashboard={Dashboard} restClient={restClient(apiUrl)} menu={Menu}>
         <Resource name="posts" list={PostList} edit={PostEdit} create={PostCreate} remove={Delete} icon={PostIcon}/>
         <Resource name="users" list={UserList} edit={UserEdit} remove={Delete} icon={UserIcon} />
     </Admin>
