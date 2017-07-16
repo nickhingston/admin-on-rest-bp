@@ -17,3 +17,4 @@ yarn-debug.log*
 yarn-error.log*
 
 .chrome
+package-lock.json
