@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
-import ContentSave from 'material-ui/svg-icons/content/save';
-import CircularProgress from 'material-ui/CircularProgress';
+//import CircularProgress from 'material-ui/CircularProgress';
 import { translate } from 'admin-on-rest';
 
 export class SubmitButton extends Component {
@@ -24,7 +23,7 @@ export class SubmitButton extends Component {
     }
 
     render() {
-        const { saving, label = 'aor.action.save', raised = true, translate, submitOnEnter, redirect } = this.props;
+        const { saving, label = 'aor.action.save', raised = true, translate, submitOnEnter/*, redirect*/ } = this.props;
         const type = submitOnEnter ? 'submit' : 'button';
         const ButtonComponent = raised ? RaisedButton : FlatButton;
         return (

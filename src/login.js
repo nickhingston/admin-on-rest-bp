@@ -7,14 +7,10 @@ import compose from 'recompose/compose';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import { Card } from 'material-ui/Card';
-import Avatar from 'material-ui/Avatar';
-import { TextField, RaisedButton } from 'material-ui';
-import CircularProgress from 'material-ui/CircularProgress';
+import { TextField, Avatar } from 'material-ui';
 import LockIcon from 'material-ui/svg-icons/action/lock-outline';
 import { cyan500, pinkA200 } from 'material-ui/styles/colors';
 import SubmitButton from './mui/buttons/SubmitButton'
-
-const apiUrl = process.env.REACT_APP_SERVICE_API;
 
 import restService from './restClient'
 
@@ -122,7 +118,7 @@ class LoginRegisterTabbedForm extends Component {
 			<TabbedForm {...this.props} tabNumber={this.state.tab} save={this.loginOrRegister} tabPressed={this.tabPressed} toolbar={
 				(<Toolbar>
 						<SubmitButton 
-							label={ (this.state.tab == 0?'mothership_admin.auth.sign_in': 'mothership_admin.auth.register') }
+							label={ (this.state.tab === 0?'mothership_admin.auth.sign_in': 'mothership_admin.auth.register') }
 							icon={null}
 							handleSubmitWithRedirect={null}
                         /> 	
@@ -168,9 +164,7 @@ class Login extends Component {
 
     render() {
 		console.log(this.props)
-		const { handleSubmit, submitting, theme, translate, userLogin } = this.props;
-		const props = { translate:translate, value:1 }
-		const none = {}
+		const { theme } = this.props;
         const muiTheme = getMuiTheme(theme);
 		const { primary1Color, accent1Color } = getColorsFromTheme(muiTheme);
 
