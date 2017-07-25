@@ -8,13 +8,28 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import { Card } from 'material-ui/Card';
 import Avatar from 'material-ui/Avatar';
-import TextField from 'material-ui/TextField';
+import { TextField, RaisedButton } from 'material-ui';
 import CircularProgress from 'material-ui/CircularProgress';
 import LockIcon from 'material-ui/svg-icons/action/lock-outline';
 import { cyan500, pinkA200 } from 'material-ui/styles/colors';
+import SubmitButton from './mui/buttons/SubmitButton'
 
-import { defaultTheme, userLogin as userLoginAction, translate, Notification, TabbedForm, FormTab,
+const apiUrl = process.env.REACT_APP_SERVICE_API;
+
+import restService from './restClient'
+
+const restClient = restService(process.env.REACT_APP_SERVICE_API)
+
+import { defaultTheme, 
+	userLogin as userLoginAction, 
+	translate, 
+	Notification,  
+	FormTab, 
+	Toolbar,
+	CREATE
  } from 'admin-on-rest';
+
+ import TabbedForm from './mui/form/TabbedForm'
 
 const styles = {
     main: {
@@ -54,7 +69,8 @@ function getColorsFromTheme(theme) {
 const renderInput = ({ meta: { touched, error } = {}, input: { ...inputProps }, ...props }) => {
 	const txtFieldProps = {
 		floatingLabelText:props.floatingLabelText,
-		disabled:props.disabled
+		disabled:props.disabled,
+		type:props.type
 	}
 	return (
     <TextField
@@ -65,21 +81,82 @@ const renderInput = ({ meta: { touched, error } = {}, input: { ...inputProps }, 
 />)
 }
 
-const tabPressed = (x,y,z) => {
-	console.log('tabPressed: ', x, ',', y, ',', z)
+
+class LoginRegisterTabbedForm extends Component {
+	constructor(props) {
+		super(props)
+		this.state = { tab:0 }
+		this.tabPressed = this.tabPressed.bind(this)
+		this.loginOrRegister = this.loginOrRegister.bind(this)
+	}
+
+	tabPressed = (tab) => {
+		console.log(tab)
+		this.setState({ tab })
+	}
+
+	loginOrRegister = (auth) => {
+		if (this.state.tab === 0) { // tab 0
+			this.props.userLogin(auth, this.props.location.state ? this.props.location.state.nextPathname : '/');
+		}
+		else if (this.state.tab === 1) {
+			console.log(this.values)
+			restClient(CREATE, 'register', {data:{ email: auth.email, link: 'http://localhost:3000/#/register'}}).then(() => {
+				console.log('Comment approved');
+				this.setState({tab:0})
+            })
+            .catch((e) => {
+                console.error(e);
+                console.log('Error: comment not approved', 'warning')
+            })
+		}
+	}
+
+	submitOnEnter = (a,b,c) => {
+		console.log(a,':', b, ':', c)
+	}
+
+	render() {
+		const { submitting, translate } = this.props;
+		return (
+			<TabbedForm {...this.props} tabNumber={this.state.tab} save={this.loginOrRegister} tabPressed={this.tabPressed} toolbar={
+				(<Toolbar>
+						<SubmitButton 
+							label={ (this.state.tab == 0?'mothership_admin.auth.sign_in': 'mothership_admin.auth.register') }
+							icon={null}
+							handleSubmitWithRedirect={null}
+                        /> 	
+				</Toolbar>)
+					}>
+				<FormTab label={translate('mothership_admin.auth.sign_in')} >
+					<Field 
+						name="username"
+						component={renderInput}
+						floatingLabelText={translate('mothership_admin.auth.username')} 
+						disabled={submitting}
+					/>
+					<Field
+						name="password"	
+						component={renderInput}
+						floatingLabelText={translate('mothership_admin.auth.password')}
+						type="password"
+						disabled={submitting}
+					/>
+				</FormTab>
+				<FormTab label={translate('mothership_admin.auth.sign_up')}>
+					<Field
+						name="email"
+						component={renderInput}
+						floatingLabelText="email"
+						disabled={submitting}
+					/>
+				</FormTab>
+				
+			</TabbedForm>
+		)
+	}
 }
 
-class TabbedForm_ extends TabbedForm {
-	handleChange = (value) => {
-		console.log("setting the fucking value")
-        this.setState({ value });
-	}
-	
-	render() {
-		return <TabbedForm {...this.props}/>
-		//return <WrappedComponent {...this.props}/>
-	}
-}
 
 class Login extends Component {
 
@@ -89,73 +166,23 @@ class Login extends Component {
 		this.props.userLogin(auth, this.props.location.state ? this.props.location.state.nextPathname : '/');
 	}
 
-	loginOrRegister = (auth) => {
-		// console.log('stoat: ', x, ',', y, ',', z)
-		console.log(this.fieldEditor1)
-		this.props.userLogin(auth, this.props.location.state ? this.props.location.state.nextPathname : '/');
-		console.log(this.formDiv.props.children[0])
-	}
-	
-	componentWillReceiveProps(nextProps) {
-		console.log(nextProps)
-
-	}
-
-	constructor(props) {
-		super(props)
-		console.log('props: ', props)
-		console.log('state1: ', this.state)
-		this.state = {date: new Date(), tab:1}
-		console.log('state2: ', this.state)
-	  }
-	
-	componentDidMount() {
-        console.log("children:", this.props.children);
-	}
-	tabClicked() {
-		console.log('clicked')
-	}
-
     render() {
 		console.log(this.props)
-		const { children, handleSubmit, submitting, theme, translate, userLogin } = this.props;
-		const props = { translate:translate }
+		const { handleSubmit, submitting, theme, translate, userLogin } = this.props;
+		const props = { translate:translate, value:1 }
 		const none = {}
         const muiTheme = getMuiTheme(theme);
-        const { primary1Color, accent1Color } = getColorsFromTheme(muiTheme);
+		const { primary1Color, accent1Color } = getColorsFromTheme(muiTheme);
+
         return (
             <MuiThemeProvider muiTheme={muiTheme}>
-			<div style={{ ...styles.main, backgroundColor: primary1Color }} >
+			<div style={{ ...styles.main, backgroundColor: primary1Color }}>
 				<Card style={styles.card}>
 					<div style={styles.avatar}>
 						<Avatar backgroundColor={accent1Color} icon={<LockIcon />} size={60} />
 					</div>
-					<TabbedForm_ {...props} label="stoat" save={this.loginOrRegister} ref={(formDiv) => { this.formDiv = formDiv; }}>
-						<FormTab label="sign in" handleActive={this.tabClicked} >
-							<Field onClick={this.tabClicked}
-								name="username"
-								component={renderInput}
-								floatingLabelText={translate('aor.auth.username')} 
-								disabled={submitting}
-							/>
-							<Field
-								name="password"
-								component={renderInput}
-								floatingLabelText={translate('aor.auth.password')}
-								type="password"
-								disabled={submitting}
-							/>
-						</FormTab>
-						<FormTab label="sign up" onClick={this.tabClicked} handleActive={this.tabClicked}>
-							<Field
-								name="email"
-								component={renderInput}
-								floatingLabelText="email"
-								disabled={submitting}
-							/>
-						</FormTab>
-						
-					</TabbedForm_>
+					
+					 <LoginRegisterTabbedForm { ...this.props }/> 
 				</Card>
 				<Notification />
 			</div>
@@ -185,10 +212,12 @@ const enhance = compose(
             const errors = {};
 			const { translate } = props;
 			console.log('enhance props:', props)
-            if (!values.username) errors.username = translate('aor.validation.required');
-            if (!values.password) errors.password = translate('aor.validation.required');
+            if (!values.username) errors.username = translate('mothership_admin.validation.required');
+			if (!values.password) errors.password = translate('mothership_admin.validation.required');
+			if (!values.email) errors.password = translate('mothership_admin.validation.required');
             return errors;
-        },
+		},
+		asyncBlurFields: []
     }),
     connect(null, { userLogin: userLoginAction }),
 );

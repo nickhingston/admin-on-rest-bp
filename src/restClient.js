@@ -74,7 +74,7 @@ export default (apiUrl, options , httpClient = fetchUtils.fetchJson) => {
             options.method = 'PUT';
             options.body = JSON.stringify(params.data);
             break;
-        case CREATE:
+        case CREATE:    
             url = `${apiUrl}/${resource}?${queryParameters({})}`;
             options.method = 'POST';
             options.body = JSON.stringify(params.data);
@@ -97,7 +97,8 @@ export default (apiUrl, options , httpClient = fetchUtils.fetchJson) => {
      * @returns {Object} REST response
      */
     const convertHTTPResponseToREST = (response, type, resource, params) => {
-        const { /*headers,*/ json } = response;
+        const json  = response.json || {}
+        //const headers  = response.headers
         switch (type) {
         case GET_LIST:
         case GET_MANY_REFERENCE:
