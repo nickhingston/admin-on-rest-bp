@@ -1,5 +1,5 @@
 import { put, takeEvery } from 'redux-saga/effects';
-import { showNotification, GET_ONE, CREATE } from 'admin-on-rest';
+import { showNotification, CREATE } from 'admin-on-rest';
 import { push } from 'react-router-redux';
 
 // register actions

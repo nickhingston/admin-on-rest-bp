@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 import { Card } from 'material-ui/Card'
-import { ViewTitle, Notification, Restricted, TextField, translate, showNotification, Toolbar, GET_ONE, CREATE } from 'admin-on-rest'
+import { ViewTitle, Notification, Restricted, translate, Toolbar, GET_ONE, CREATE } from 'admin-on-rest'
 import { withRouter } from 'react-router-dom'
 import { UserCreate } from './users'
 import restService from './restClient'
 import SubmitButton from './mui/buttons/SubmitButton'
-import { put } from 'redux-saga/effects'
 import { connect } from 'react-redux'
 
 import { 
@@ -51,7 +50,7 @@ class RegisterClass extends Component {
 	}
 
 	render() {
-		const {title, location, translate } = this.props;
+		const { translate } = this.props;
 		const values = this.state.user;
 		const toolbar = (<Toolbar>
 								<SubmitButton 

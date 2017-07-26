@@ -86,7 +86,7 @@ export const UserCreate = (props) => {
 
 // Create a user logged in with an admin user
 export const UserCreateWithAdmin = (props) => {
-	let isAdminUser = JSON.parse(localStorage.user).role === 'admin';
+	//let isAdminUser = JSON.parse(localStorage.user).role === 'admin';
 	return (
 		<Create {...props}>
 			<SimpleForm {...props} >
