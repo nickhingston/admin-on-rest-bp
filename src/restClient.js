@@ -75,7 +75,10 @@ export default (apiUrl, options , httpClient = fetchUtils.fetchJson) => {
             options.body = JSON.stringify(params.data);
             break;
         case CREATE:    
-            url = `${apiUrl}/${resource}?${queryParameters({})}`;
+            const query = {
+                access_token:params.access_token
+            }
+            url = `${apiUrl}/${resource}?${queryParameters(query)}`;
             options.method = 'POST';
             options.body = JSON.stringify(params.data);
             break;
@@ -107,6 +110,9 @@ export default (apiUrl, options , httpClient = fetchUtils.fetchJson) => {
                 total: json.count,
             };
         case CREATE:
+            if (resource === 'users') {
+                return { data: { ...params.data, id: json.user.id, token: json.token } };    
+            }
             return { data: { ...params.data, id: json.id } };
         case DELETE:
             return {data: {}}; // no json in DELETE method

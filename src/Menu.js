@@ -11,6 +11,9 @@ function onTouchTapFn() {
 
 export default ({ resources, onMenuTap, logout }) => {
 	let isAdminUser = (localStorage.user ? JSON.parse(localStorage.user).role === 'admin': false);
+	if (!localStorage.token) {
+		return <div>{logout}</div>;
+	}
 	console.log("resources:", resources);
 	return (
 		<div>

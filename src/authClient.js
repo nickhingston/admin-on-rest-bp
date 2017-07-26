@@ -58,7 +58,10 @@ export default (apiUrl, masterKey) => {
 		}
 		// called when the user navigates to a new location
 		if (type === AUTH_CHECK) {
-			return localStorage.getItem('token') ? Promise.resolve() : Promise.reject();
+			if (params.resource === 'register') {
+				return Promise.resolve();
+			}
+ 			return localStorage.getItem('token') ? Promise.resolve() : Promise.reject();
 		}
 		return Promise.reject('Unknown method');
 	}

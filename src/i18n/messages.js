@@ -74,5 +74,9 @@ export default {
             number: 'Must be a number',
             email: 'Must be a valid email',
         },
+        register: {
+            expired: 'Registration expired, please re-request sign up',
+            create_user: 'Create user'
+        }
     },
 };

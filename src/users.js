@@ -1,8 +1,9 @@
 // in src/users.js
 import React from 'react';
 import { 
+    Create,
 	Edit,
-	List,
+    List,
 	Responsive,
 	SimpleForm,
 	SimpleList,
@@ -69,3 +70,31 @@ const UserFilter = (props) => (
         <TextInput label="Search" source="q" alwaysOn />
     </Filter>
 );
+
+
+// Create a user from a registration from
+export const UserCreate = (props) => {
+	return (
+        <SimpleForm {...props} >
+            {/* <TextField source="email" /> */}
+            <TextInput source="name" />
+            <TextInput source="password" type="password"  />
+            <TextInput source="repeat_password" type="password" />
+        </SimpleForm>
+	);
+};
+
+// Create a user logged in with an admin user
+export const UserCreateWithAdmin = (props) => {
+	let isAdminUser = JSON.parse(localStorage.user).role === 'admin';
+	return (
+		<Create {...props}>
+			<SimpleForm {...props} >
+                 <TextField source="email" /> 
+                <TextInput source="name" />
+                <TextInput source="password" type="password"  />
+                <TextInput source="repeat_password" type="password" />
+			</SimpleForm>
+	 	</Create> 
+	);
+};

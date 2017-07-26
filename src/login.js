@@ -208,7 +208,7 @@ const enhance = compose(
 			console.log('enhance props:', props)
             if (!values.username) errors.username = translate('mothership_admin.validation.required');
 			if (!values.password) errors.password = translate('mothership_admin.validation.required');
-			if (!values.email) errors.password = translate('mothership_admin.validation.required');
+			//if (!values.email) errors.password = translate('mothership_admin.validation.required');
             return errors;
 		},
 		asyncBlurFields: []

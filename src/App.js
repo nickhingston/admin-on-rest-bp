@@ -12,11 +12,13 @@ import restClient from './restClient';
 import Menu from './Menu';
 
 import { PostList, PostEdit, PostCreate } from './posts';
-import { UserList, UserEdit } from './users';
+import { UserList, UserEdit, UserCreate } from './users';
 
-import PostIcon from 'material-ui/svg-icons/action/book';
-import UserIcon from 'material-ui/svg-icons/social/group';
+import customRoutes from './customRoutes'
 
+import PostIcon from 'material-ui/svg-icons/action/book'
+import UserIcon from 'material-ui/svg-icons/social/group'
+import registerSaga from './registerSaga'
 import enMessages from './i18n/messages'
 
 const messages = {
@@ -31,9 +33,18 @@ const masterKey = process.env.REACT_APP_MASTER_KEY;
 const App = () => {
   //let isAdminUser = (localStorage.user ? JSON.parse(localStorage.user).role === 'admin': false);
   return(
-    <Admin loginPage={Login} authClient={authClient(apiUrl, masterKey)} dashboard={Dashboard} restClient={restClient(apiUrl)} menu={Menu} local={resolveBrowserLocale()} messages={messages}>
-        <Resource name="posts" list={PostList} edit={PostEdit} create={PostCreate} remove={Delete} icon={PostIcon}/>
-        <Resource name="users" list={UserList} edit={UserEdit} remove={Delete} icon={UserIcon} />
+    <Admin  customRoutes={customRoutes} 
+            loginPage={Login} 
+            authClient={authClient(apiUrl, masterKey)} 
+            dashboard={Dashboard} 
+            restClient={restClient(apiUrl)} 
+            menu={Menu} 
+            local={resolveBrowserLocale()} 
+            messages={messages}
+            customSagas={[ registerSaga ]}>
+
+        <Resource name="posts" list={PostList} edit={PostEdit} create={PostCreate} remove={Delete} icon={PostIcon} />
+        <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate} remove={Delete} icon={UserIcon} />
     </Admin>
 )};
 
