@@ -14,6 +14,9 @@ import SubmitButton from './mui/buttons/SubmitButton'
 
 import restService from './restClient'
 
+// TODO: need a way of /auth requests being redirected 
+const masterKey = process.env.REACT_APP_MASTER_KEY;
+
 const restClient = restService(process.env.REACT_APP_SERVICE_API)
 
 import { defaultTheme, 
@@ -83,7 +86,7 @@ class LoginRegisterTabbedForm extends Component {
 		super(props)
 		this.state = { tab:0 }
 		this.tabPressed = this.tabPressed.bind(this)
-		this.loginOrRegister = this.loginOrRegister.bind(this)
+		this.loginRegisterOrForgotPwd = this.loginRegisterOrForgotPwd.bind(this)
 	}
 
 	tabPressed = (tab) => {
@@ -91,14 +94,23 @@ class LoginRegisterTabbedForm extends Component {
 		this.setState({ tab })
 	}
 
-	loginOrRegister = (auth) => {
-		if (this.state.tab === 0) { // tab 0
+	loginRegisterOrForgotPwd = (auth, redirect) => {
+		if (redirect === "sign_in") { // tab 0
 			this.props.userLogin(auth, this.props.location.state ? this.props.location.state.nextPathname : '/');
 		}
-		else if (this.state.tab === 1) {
+		else if (redirect === "forgot_password") {
+			console.log(this.values)
+			restClient(CREATE, 'password-resets', {access_token:masterKey, data:{ email: auth.username, link: 'http://localhost:3000/#/password-resets'}}).then(() => {
+                console.log('Sent!')
+            })
+            .catch((e) => {
+                console.error(e);
+                console.log('Error: password', 'warning')
+            })
+		} 
+		else if (redirect === "register") {
 			console.log(this.values)
 			restClient(CREATE, 'register', {data:{ email: auth.email, link: 'http://localhost:3000/#/register'}}).then(() => {
-				console.log('Comment approved');
 				this.setState({tab:0})
             })
             .catch((e) => {
@@ -108,22 +120,41 @@ class LoginRegisterTabbedForm extends Component {
 		}
 	}
 
-	submitOnEnter = (a,b,c) => {
-		console.log(a,':', b, ':', c)
+	forgotPassword = () => {
+		console.log("yeah i forgot!")
 	}
 
 	render() {
-		const { submitting, translate } = this.props;
+		const { submitting, translate } = this.props
+		const divProps = {}
+
 		return (
-			<TabbedForm {...this.props} tabNumber={this.state.tab} save={this.loginOrRegister} tabPressed={this.tabPressed} toolbar={
-				(<Toolbar>
-						<SubmitButton 
-							label={ (this.state.tab === 0?'mothership_admin.auth.sign_in': 'mothership_admin.auth.register') }
-							icon={null}
-							handleSubmitWithRedirect={null}
-                        /> 	
-				</Toolbar>)
-					}>
+			<TabbedForm {...this.props} tabNumber={this.state.tab}  save={this.loginRegisterOrForgotPwd} tabPressed={this.tabPressed} toolbar={
+			
+					 this.state.tab === 0 ?
+						<Toolbar>
+							<SubmitButton 	
+								label='mothership_admin.auth.sign_in'
+								icon={null}
+								handleSubmitWithRedirect={null}
+								redirect="sign_in"
+							/> 	
+							<SubmitButton
+								label='mothership_admin.auth.forgot_password'
+								icon={null}
+								handleSubmitWithRedirect={null}
+								raised={false}
+								redirect="forgot_password"
+							/> 
+						</Toolbar>	: <Toolbar> 
+							<SubmitButton 
+								label='mothership_admin.auth.register'
+								icon={null}
+								handleSubmitWithRedirect={null}
+								redirect="register"
+							/>
+						</Toolbar>	
+					} >
 				<FormTab label={translate('mothership_admin.auth.sign_in')} >
 					<Field 
 						name="username"

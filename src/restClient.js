@@ -75,9 +75,11 @@ export default (apiUrl, options , httpClient = fetchUtils.fetchJson) => {
             options.body = JSON.stringify(params.data);
             break;
         case CREATE:    
-            const query = {
-                access_token:params.access_token
+            const query = {}
+            if (params.access_token) {
+                query.access_token = params.access_token;
             }
+            
             url = `${apiUrl}/${resource}?${queryParameters(query)}`;
             options.method = 'POST';
             options.body = JSON.stringify(params.data);
