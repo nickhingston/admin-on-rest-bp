@@ -14,7 +14,7 @@ export default ({ resources, onMenuTap, logout }) => {
 	if (!localStorage.token) {
 		return <div>{logout}</div>;
 	}
-	console.log("resources:", resources);
+	//console.log("resources:", resources);
 	return (
 		<div>
 			<MenuItemLink to="/posts" primaryText="Posts" onTouchTap={onTouchTapFn} icon={PostIcon}/>

@@ -58,7 +58,7 @@ export default (apiUrl, masterKey) => {
 		}
 		// called when the user navigates to a new location
 		if (type === AUTH_CHECK) {
-			if (params.resource === 'register') {
+			if (params.resource === 'register' || params.resource === 'password-resets') {
 				return Promise.resolve();
 			}
  			return localStorage.getItem('token') ? Promise.resolve() : Promise.reject();

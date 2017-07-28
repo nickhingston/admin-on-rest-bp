@@ -13,6 +13,7 @@ import Menu from './Menu';
 
 import { PostList, PostEdit, PostCreate } from './posts';
 import { UserList, UserEdit, UserCreate } from './users';
+import { PasswordEdit } from './password'
 
 import customRoutes from './customRoutes'
 
@@ -48,6 +49,7 @@ const App = () => {
 
         <Resource name="posts" list={PostList} edit={PostEdit} create={PostCreate} remove={Delete} icon={PostIcon} />
         <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate} remove={Delete} icon={UserIcon} />
+        <Resource name="password-resets" edit={PasswordEdit} icon={UserIcon} />
     </Admin>
 )};
 

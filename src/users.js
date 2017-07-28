@@ -31,7 +31,7 @@ export const UserList = (props) => (
                 <SimpleList
                     primaryText={record => `${record}`}// record.email}
                     //secondaryText={record => `${record.views} views`}
-                    //{/*tertiaryText={record => new Date(record.published_at).toLocaleDateString()}*/}
+                    //tertiaryText={record => new Date(record.published_at).toLocaleDateString()}
                 />
             }
             medium={
@@ -53,7 +53,8 @@ const UserEmail = ({ record }) => {
     return <span>{record.email}</span>;
 };
 
-export const UserEdit = (props) => (
+export const UserEdit = (props) => {
+    return (
     <Edit title={<UserEmail />} {...props}>
         <SimpleForm>
 			<ImageField source="picture" />
@@ -63,7 +64,7 @@ export const UserEdit = (props) => (
             <TextInput source="role" />
         </SimpleForm>
     </Edit>
-);
+)}
 
 const UserFilter = (props) => (
     <Filter {...props}>

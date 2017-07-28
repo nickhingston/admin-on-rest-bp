@@ -119,6 +119,9 @@ export default (apiUrl, options , httpClient = fetchUtils.fetchJson) => {
         case DELETE:
             return {data: {}}; // no json in DELETE method
         default:
+            if (!json.id && json.token) { // password-resets doesnt return an id - fix that...
+                json.id = json.token
+            }
             return { data: json };
         }
     };
