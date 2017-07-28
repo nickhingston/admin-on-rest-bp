@@ -1,26 +1,46 @@
 import { put, takeEvery } from 'redux-saga/effects';
-import { showNotification, CREATE } from 'admin-on-rest';
+import { showNotification, CREATE, GET_ONE } from 'admin-on-rest';
 import { push } from 'react-router-redux';
 
+
+
+// reducers
+
+export const registerGetReducer = (previousState = null, { type, payload }) => {
+    if (type === 'REGISTER_GET_REQUEST_SUCCESS') {
+        return payload.data;
+    }
+    return previousState;
+}
 // register actions
-export const REGISTER_USER = 'REGISTER_USER';
-export const registerUser = (id, data, basePath) => ({
-    type: REGISTER_USER,
-    payload: { id, data: { ...data, is_approved: true } },
-    meta: { resource: 'user', fetch: CREATE, cancelPrevious: false },
-});
+export const REGISTER_GET_REQUEST = 'REGISTER_GET_REQUEST';
+export const registerGet = (id, data, basePath) => {
+    return ({
+        type: REGISTER_GET_REQUEST,
+        payload: { id, data: { ...data}  },
+        meta: { resource: 'register', fetch: GET_ONE, cancelPrevious: false },
+    })
+};
 
-export const REGISTER_FAILED = 'REGISTER_FAILED';
-export const registerFailed = (error) => ({
-    type: REGISTER_FAILED,
-    error: error.message,
-    // meta: { resource: 'register', fetch: GET_ONE, cancelPrevious: false },
-});
+export const REGISTER_USER_REQUEST = 'REGISTER_USER_REQUEST';
+export const registerUser = (data, regToken) => {
+    return ({
+        type: REGISTER_USER_REQUEST,
+        payload:  { access_token:regToken, data },
+        meta: { resource: 'users', fetch: CREATE, cancelPrevious: false },
+    })
+};
 
-export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
-export const registerSuccess = () => ({
-    type: REGISTER_SUCCESS,
-});
+// saga
+function *handleRegisterGetSuccess(bah) {
+    console.log(bah)
+     yield put(showNotification('handleRegisterGetSuccess'))
+}
+
+function *handleRegisterGetFailed(bah) {
+    console.log(bah)
+     yield put(showNotification('handleRegisterGetFailed'))
+}
 
 function *handleRegistrationFailed({error}) {
     yield put(showNotification('Registration failed: ' + error , 'warning'))
@@ -32,7 +52,9 @@ function *handleRegistrationSucceeded() {
 }
 
 export default function *registerSaga() {
-    yield takeEvery('REGISTER_FAILED', handleRegistrationFailed)
-    yield takeEvery('REGISTER_SUCCESS', handleRegistrationSucceeded)
+    yield takeEvery('REGISTER_GET_REQUEST_SUCCESS', handleRegisterGetSuccess)
+    yield takeEvery('REGISTER_GET_REQUEST_FAILURE', handleRegisterGetFailed)
+    yield takeEvery('REGISTER_USER_REQUEST_SUCCESS', handleRegistrationSucceeded)
+    yield takeEvery('REGISTER_USER_REQUEST_FAILURE', handleRegistrationFailed)
 }
 

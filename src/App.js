@@ -18,8 +18,9 @@ import customRoutes from './customRoutes'
 
 import PostIcon from 'material-ui/svg-icons/action/book'
 import UserIcon from 'material-ui/svg-icons/social/group'
-import registerSaga from './registerSaga'
+import registerSaga, {registerGetReducer as registrationObj} from './registerSaga'
 import enMessages from './i18n/messages'
+
 
 const messages = {
     en: enMessages,
@@ -41,7 +42,9 @@ const App = () => {
             menu={Menu} 
             local={resolveBrowserLocale()} 
             messages={messages}
-            customSagas={[ registerSaga ]}>
+            customSagas={[ registerSaga ]}
+            customReducers={{ registrationObj }} >
+
 
         <Resource name="posts" list={PostList} edit={PostEdit} create={PostCreate} remove={Delete} icon={PostIcon} />
         <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate} remove={Delete} icon={UserIcon} />

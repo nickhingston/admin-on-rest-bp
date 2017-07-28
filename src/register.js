@@ -8,8 +8,8 @@ import SubmitButton from './mui/buttons/SubmitButton'
 import { connect } from 'react-redux'
 
 import { 
-	registerFailed as registerFailedAction,
-	registerSuccess as registerSuccessAction 
+	registerGet as registerGetAction,
+	registerUser as registerUserAction,
 } from './registerSaga'
 
 
@@ -29,28 +29,18 @@ class RegisterClass extends Component {
 	}
 
 	componentDidMount() {
-		restClient(GET_ONE, 'register', {id:this.props.regToken}).then((response) => {
-			console.log(response);
-			this.setState({user:response.data, expired:false})
-		}).catch(e => {
-			console.log('Get Register:', this.props.regToken);
-			console.log(e);
-			this.setState({expired:true})
-		})
+		this.props.registerGet(this.props.regToken)
 	}
 
 	submit(formDetails) {
 		const { repeat_password, ...rest } = formDetails
-		const { registerFailed, registerSuccess, regToken } = this.props
-		restClient(CREATE, 'users', {access_token:regToken, data:{...rest, email:this.state.user.email }} ).then((response) => {
-			registerSuccess()
-		}).catch(e => {
-			registerFailed(e)
-		})
+		const { registerFailed, registerSuccess, regToken, reg } = this.props
+
+		this.props.registerUser({...rest, email:reg.email }, regToken)
 	}
 
 	render() {
-		const { translate } = this.props;
+		const { translate, reg } = this.props;
 		const values = this.state.user;
 		const toolbar = (<Toolbar>
 								<SubmitButton 
@@ -62,9 +52,9 @@ class RegisterClass extends Component {
 		return (
 			<div >
 				<Card >
-					{ this.state.user && <ViewTitle title={this.state.user.email} /> }
-					{ this.state.user && UserCreate({...this.state.user, save:this.submit, values:values, toolbar})}
-					{ this.state.expired && <ViewTitle title={translate('mothership_admin.register.expired')} />}
+					{ reg && reg.email && <ViewTitle title={reg.email} /> }
+					{ reg && reg.email && UserCreate({...reg, save:this.submit, values:reg, toolbar})}
+					{ reg===null && <ViewTitle title={translate('mothership_admin.register.expired')} />}
 				</Card>
 				<Notification/>
 			</div>
@@ -73,14 +63,25 @@ class RegisterClass extends Component {
 }
 
 RegisterClass.propTypes = {
-	registerFailed: PropTypes.func,
-	registerSuccess: PropTypes.func
+	registerGet: PropTypes.func,
+	registerUser: PropTypes.func,
+
+	reg:PropTypes.object,
+	user: PropTypes.object,
+	expired: PropTypes.bool,
+	regToken: PropTypes.string.isRequired
 };
 
-const Register = connect(null, 
+
+const mapStateToProps = state => {
+	console.log(state)
+	return ({ reg: state.registrationObj })
+}
+
+const Register = connect(mapStateToProps, 
 	{
-		registerFailed:registerFailedAction, 
-		registerSuccess:registerSuccessAction 
+		registerGet:registerGetAction,
+		registerUser:registerUserAction,
 	}
 )(RegisterClass)
 
