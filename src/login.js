@@ -99,6 +99,7 @@ class LoginRegisterTabbedForm extends Component {
 			this.props.userLogin(auth, this.props.location.state ? this.props.location.state.nextPathname : '/');
 		}
 		else if (redirect === "forgot_password") {
+			// TODO: make more redux-esq
 			console.log(this.values)
 			restClient(CREATE, 'password-resets', {access_token:masterKey, data:{ email: auth.username, link: 'http://localhost:3000/#/password-resets'}}).then(() => {
                 console.log('Sent!')
@@ -109,6 +110,7 @@ class LoginRegisterTabbedForm extends Component {
             })
 		} 
 		else if (redirect === "register") {
+			// TODO: make more redux-esq
 			console.log(this.values)
 			restClient(CREATE, 'register', {data:{ email: auth.email, link: 'http://localhost:3000/#/register'}}).then(() => {
 				this.setState({tab:0})
@@ -126,7 +128,6 @@ class LoginRegisterTabbedForm extends Component {
 
 	render() {
 		const { submitting, translate } = this.props
-		const divProps = {}
 
 		return (
 			<TabbedForm {...this.props} tabNumber={this.state.tab}  save={this.loginRegisterOrForgotPwd} tabPressed={this.tabPressed} toolbar={
