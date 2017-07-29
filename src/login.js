@@ -12,6 +12,7 @@ import LockIcon from 'material-ui/svg-icons/action/lock-outline';
 import { cyan500, pinkA200 } from 'material-ui/styles/colors';
 import SubmitButton from './mui/buttons/SubmitButton'
 
+import { passwordReset as passwordResetAction } from './password'
 import restService from './restClient'
 
 // TODO: need a way of /auth requests being redirected 
@@ -81,7 +82,7 @@ const renderInput = ({ meta: { touched, error } = {}, input: { ...inputProps }, 
 }
 
 
-class LoginRegisterTabbedForm extends Component {
+class LoginRegisterTabbedForm_ extends Component {
 	constructor(props) {
 		super(props)
 		this.state = { tab:0 }
@@ -100,14 +101,7 @@ class LoginRegisterTabbedForm extends Component {
 		}
 		else if (redirect === "forgot_password") {
 			// TODO: make more redux-esq
-			console.log(this.values)
-			restClient(CREATE, 'password-resets', {access_token:masterKey, data:{ email: auth.username, link: 'http://localhost:3000/#/password-resets'}}).then(() => {
-                console.log('Sent!')
-            })
-            .catch((e) => {
-                console.error(e);
-                console.log('Error: password', 'warning')
-            })
+			this.props.passwordReset(masterKey, { email: auth.username, link: 'http://localhost:3000/#/password-resets'})
 		} 
 		else if (redirect === "register") {
 			// TODO: make more redux-esq
@@ -185,6 +179,14 @@ class LoginRegisterTabbedForm extends Component {
 	}
 }
 
+// const mapStateToProps = state => {
+// 	console.log(state)
+// 	return ({ reg: state.registrationObj })
+// }
+
+const LoginRegisterTabbedForm = connect(null,{
+	
+}) (LoginRegisterTabbedForm_)
 
 class Login extends Component {
 
@@ -223,7 +225,8 @@ Login.propTypes = {
     previousRoute: PropTypes.string,
     theme: PropTypes.object.isRequired,
     translate: PropTypes.func.isRequired,
-    userLogin: PropTypes.func.isRequired,
+	userLogin: PropTypes.func.isRequired,
+	resetPassword: PropTypes.func
 };
 
 Login.defaultProps = {
@@ -245,7 +248,9 @@ const enhance = compose(
 		},
 		asyncBlurFields: []
     }),
-    connect(null, { userLogin: userLoginAction }),
+	connect(null, { userLogin: userLoginAction,
+					passwordReset:passwordResetAction
+				  })
 );
 
 export default enhance(Login);

@@ -78,6 +78,10 @@ export default {
         register: {
             expired: 'Registration expired, please re-request sign up',
             create_user: 'Create user'
+        },
+        password: {
+            request_sent:   'Password request sent, please check your inbox',
+            request_failed: 'Password request failed, please try again later'
         }
     },
 };
