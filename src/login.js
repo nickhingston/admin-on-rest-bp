@@ -106,12 +106,8 @@ class LoginRegisterTabbedForm_ extends Component {
 		}
 	}
 
-	forgotPassword = () => {
-		console.log("yeah i forgot!")
-	}
-
 	render() {
-		const { submitting } = this.props
+		const { submitting, translate } = this.props
 
 		return (
 			<TabbedForm {...this.props} tabNumber={this.state.tab}  save={this.loginRegisterOrForgotPwd} tabPressed={this.tabPressed} toolbar={
