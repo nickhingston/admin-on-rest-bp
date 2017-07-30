@@ -13,6 +13,7 @@ import { cyan500, pinkA200 } from 'material-ui/styles/colors';
 import SubmitButton from './mui/buttons/SubmitButton'
 
 import { passwordReset as passwordResetAction } from './password'
+import { registerRequest as registerRequestAction } from './registerSaga'
 import restService from './restClient'
 
 // TODO: need a way of /auth requests being redirected 
@@ -97,22 +98,15 @@ class LoginRegisterTabbedForm_ extends Component {
 
 	loginRegisterOrForgotPwd = (auth, redirect) => {
 		if (redirect === "sign_in") { // tab 0
-			this.props.userLogin(auth, this.props.location.state ? this.props.location.state.nextPathname : '/');
+			this.props.userLogin(auth, this.props.location.state ? this.props.location.state.nextPathname : '/')
 		}
 		else if (redirect === "forgot_password") {
-			// TODO: make more redux-esq
+			// TODO: link should be current locatiokn
 			this.props.passwordReset(masterKey, { email: auth.username, link: 'http://localhost:3000/#/password-resets'})
 		} 
 		else if (redirect === "register") {
-			// TODO: make more redux-esq
-			console.log(this.values)
-			restClient(CREATE, 'register', {data:{ email: auth.email, link: 'http://localhost:3000/#/register'}}).then(() => {
-				this.setState({tab:0})
-            })
-            .catch((e) => {
-                console.error(e);
-                console.log('Error: comment not approved', 'warning')
-            })
+			// TODO: link should be current locatiokn
+			this.props.registerRequest({ email: auth.email, link: 'http://localhost:3000/#/register'})
 		}
 	}
 
@@ -190,11 +184,11 @@ const LoginRegisterTabbedForm = connect(null,{
 
 class Login extends Component {
 
-    login = (auth) => {
-		console.log('auth:', auth)
-		console.log('login props:',this.props)
-		this.props.userLogin(auth, this.props.location.state ? this.props.location.state.nextPathname : '/');
-	}
+    // login = (auth) => {
+	// 	console.log('auth:', auth)
+	// 	console.log('login props:',this.props)
+	// 	this.props.userLogin(auth, this.props.location.state ? this.props.location.state.nextPathname : '/');
+	// }
 
     render() {
 		console.log(this.props)
@@ -241,15 +235,16 @@ const enhance = compose(
             const errors = {};
 			const { translate } = props;
 			console.log('enhance props:', props)
-            if (!values.username) errors.username = translate('mothership_admin.validation.required');
-			if (!values.password) errors.password = translate('mothership_admin.validation.required');
-			//if (!values.email) errors.password = translate('mothership_admin.validation.required');
+				// if (!values.username) errors.username = translate('mothership_admin.validation.required');
+				// if (!values.password) errors.password = translate('mothership_admin.validation.required');
+				// if (!values.email) errors.email	 = translate('mothership_admin.validation.required');
             return errors;
 		},
 		asyncBlurFields: []
     }),
 	connect(null, { userLogin: userLoginAction,
-					passwordReset:passwordResetAction
+					passwordReset:passwordResetAction,
+					registerRequest:registerRequestAction
 				  })
 );
 

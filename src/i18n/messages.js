@@ -76,6 +76,9 @@ export default {
             email: 'Must be a valid email',
         },
         register: {
+            request_sent: 'Registation requested, please check your email',
+            already_registered: 'This email already has an account...',
+            request_failed: 'Request failed, please try again later...',
             expired: 'Registration expired, please re-request sign up',
             create_user: 'Create user'
         },

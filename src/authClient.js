@@ -50,8 +50,9 @@ export default (apiUrl, masterKey) => {
 		// called when the API returns an error
 		if (type === AUTH_ERROR) {
 			const { status } = params;
-			if (status === 401 || status === 403) {
+			if (status === 401) { // log em out
 				localStorage.removeItem('username');
+				localStorage.removeItem('token');
 				return Promise.reject();
 			}
 			return Promise.resolve();

@@ -25,8 +25,8 @@ function *handlePasswordResetRequestSuccess() {
      yield put(showNotification('mothership_admin.password.request_sent'))
 }
 
-function *handlePasswordResetRequestFailure(bah) {
-    console.log(bah)
+function *handlePasswordResetRequestFailure({error}) {
+    console.log(error)
      yield put(showNotification('mothership_admin.password.request_failed', 'warning'))
 }
 
