@@ -3,7 +3,14 @@
 // in src/App.js
 
 import React from 'react';
-import { /*jsonServerRestClient,*/ Admin, Resource, Delete, resolveBrowserLocale} from 'admin-on-rest';
+import { /*jsonServerRestClient,*/ 
+    Admin,
+    Resource,
+    Delete,
+    resolveBrowserLocale} from 'admin-on-rest';
+
+import AdminMS from './AdminMS'
+
 import Login from'./login';
 
 import Dashboard from './Dashboard';
@@ -36,7 +43,7 @@ const masterKey = process.env.REACT_APP_MASTER_KEY;
 const App = () => {
   //let isAdminUser = (localStorage.user ? JSON.parse(localStorage.user).role === 'admin': false);
   return(
-    <Admin  customRoutes={customRoutes} 
+    <AdminMS  customRoutes={customRoutes} 
             loginPage={Login} 
             authClient={authClient(apiUrl, masterKey)} 
             dashboard={Dashboard} 
@@ -48,10 +55,10 @@ const App = () => {
             customReducers={{ registrationObj }} >
 
 
-        <Resource name="posts" list={PostList} edit={PostEdit} create={PostCreate} remove={Delete} icon={PostIcon} />
+         <Resource name="posts" list={PostList} edit={PostEdit} create={PostCreate} remove={Delete} icon={PostIcon} />
         <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate} remove={Delete} icon={UserIcon} />
-        <Resource name="password-resets" edit={PasswordEdit} icon={UserIcon} />
-    </Admin>
+        <Resource name="password-resets" edit={PasswordEdit} icon={UserIcon} /> 
+    </AdminMS>
 )};
 
 export default App;
