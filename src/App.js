@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { /*jsonServerRestClient,*/ 
-    Admin,
+    // Admin,
     Resource,
     Delete,
     resolveBrowserLocale} from 'admin-on-rest';

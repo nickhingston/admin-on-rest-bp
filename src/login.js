@@ -14,20 +14,16 @@ import SubmitButton from './mui/buttons/SubmitButton'
 
 import { passwordReset as passwordResetAction } from './password'
 import { registerRequest as registerRequestAction } from './registerSaga'
-import restService from './restClient'
 
 // TODO: need a way of /auth requests being redirected 
 const masterKey = process.env.REACT_APP_MASTER_KEY;
-
-const restClient = restService(process.env.REACT_APP_SERVICE_API)
 
 import { defaultTheme, 
 	userLogin as userLoginAction, 
 	translate, 
 	Notification,  
 	FormTab, 
-	Toolbar,
-	CREATE
+	Toolbar
  } from 'admin-on-rest';
 
  import TabbedForm from './mui/form/TabbedForm'
@@ -115,7 +111,7 @@ class LoginRegisterTabbedForm_ extends Component {
 	}
 
 	render() {
-		const { submitting, translate } = this.props
+		const { submitting } = this.props
 
 		return (
 			<TabbedForm {...this.props} tabNumber={this.state.tab}  save={this.loginRegisterOrForgotPwd} tabPressed={this.tabPressed} toolbar={
@@ -234,10 +230,9 @@ const enhance = compose(
         validate: (values, props) => {
             const errors = {};
 			const { translate } = props;
-			console.log('enhance props:', props)
-				// if (!values.username) errors.username = translate('mothership_admin.validation.required');
-				// if (!values.password) errors.password = translate('mothership_admin.validation.required');
-				// if (!values.email) errors.email	 = translate('mothership_admin.validation.required');
+			if (!values.username) errors.username = translate('mothership_admin.validation.required');
+			if (!values.password) errors.password = translate('mothership_admin.validation.required');
+			// if (!values.email) errors.email	 = translate('mothership_admin.validation.required');
             return errors;
 		},
 		asyncBlurFields: []
