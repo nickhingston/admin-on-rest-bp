@@ -93,16 +93,17 @@ class LoginRegisterTabbedForm_ extends Component {
 	}
 
 	loginRegisterOrForgotPwd = (auth, redirect) => {
+		const host = process.env.REACT_APP_HOST;
 		if (redirect === "sign_in") { // tab 0
 			this.props.userLogin(auth, this.props.location.state ? this.props.location.state.nextPathname : '/')
 		}
 		else if (redirect === "forgot_password") {
 			// TODO: link should be current locatiokn
-			this.props.passwordReset(masterKey, { email: auth.username, link: 'http://localhost:3000/#/password-resets'})
+			this.props.passwordReset(masterKey, { email: auth.username, link: host + '/#/password-resets'})
 		} 
 		else if (redirect === "register") {
 			// TODO: link should be current locatiokn
-			this.props.registerRequest({ email: auth.email, link: 'http://localhost:3000/#/register'})
+			this.props.registerRequest({ email: auth.email, link: host + '/#/register'})
 		}
 	}
 
