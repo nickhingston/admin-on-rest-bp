@@ -47,6 +47,7 @@ export const PlatesList = (props) => {
                 <Datagrid>
                     <TextField source="id" />
                     <TextField source="familyName" />
+					<TextField source="category" />
 					<TextField source="manufacturer" />
                     <EditButton />
                 </Datagrid>
@@ -90,6 +91,7 @@ export const PlatesEdit = (props) => {
         <SimpleForm>
             <DisabledInput source="id" />	
             <TextInput source="familyName" />
+			<TextInput source="category" />
 			<TextInput source="manufacturer" />
 			<TextInput source="defaultItemIndex" />
 			<TextInput source="flipAxis" />
@@ -115,6 +117,7 @@ export const PlatesCreate = (props) => {
 		<Create {...props}>
 			<SimpleForm>
 				<TextInput source="familyName" />
+				<TextInput source="category" />
 				<TextInput source="manufacturer" />
 				<TextInput source="defaultItemIndex" />
 				<TextInput source="flipAxis" />
@@ -130,6 +133,7 @@ export const PlateItemsList = (props) => {
 		<Datagrid>
 			<DisabledInput source="items[0].id" />
 			<TextField source="name" />
+			<TextField source="category" />
 			<TextField source="code" />
 			<EditButton />
 		</Datagrid>
