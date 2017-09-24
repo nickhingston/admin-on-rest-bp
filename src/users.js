@@ -60,7 +60,8 @@ export const UserEdit = (props) => {
 			<ImageField source="picture" />
             <DisabledInput source="id" />
             <DisabledInput source="email" />
-			<TextInput source="name" />
+			<TextInput source="firstName" />
+            <TextInput source="lastName" />
             <TextInput source="role" />
         </SimpleForm>
     </Edit>
@@ -78,7 +79,8 @@ export const UserCreate = (props) => {
 	return (
         <SimpleForm {...props} >
             {/* <TextField source="email" /> */}
-            <TextInput source="name" />
+            <TextInput source="firstName" />
+            <TextInput source="lastName" />
             <TextInput source="password" type="password"  />
             <TextInput source="repeat_password" type="password" />
         </SimpleForm>

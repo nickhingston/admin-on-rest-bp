@@ -52,11 +52,9 @@ function *handleRegisterFailed1(data) {
     console.log(data)
     if (data.error === 'Forbidden') {
         yield put(showNotification('mothership_admin.register.already_registered', 'warning'))
-        console.log('chimp')
     }
     else {
         yield put(showNotification('mothership_admin.register.request_failed', 'warning'))
-        console.log('chomp')
     }
 }
     
