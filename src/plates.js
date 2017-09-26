@@ -96,7 +96,6 @@ export const PlatesEdit = (props) => {
 			<TextInput source="defaultItemIndex" />
 			<TextInput source="flipAxis" />
 			
-			{/* <ReferenceArrayField label="Plate items" reference="plate-items" source="items"> */}
 			<ReferenceManyField label="Items" reference="plate-items" source="items" target="family">	
                 <Datagrid>
                     <TextField source="id" />
