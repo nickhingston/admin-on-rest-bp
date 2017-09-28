@@ -17,7 +17,7 @@ import { registerRequest as registerRequestAction } from './registerSaga'
 
 // TODO: need a way of /auth requests being redirected 
 const masterKey = process.env.REACT_APP_MASTER_KEY;
-
+const host = process.env.REACT_APP_HOST || "http://ortho-prep.com:3000";
 import { defaultTheme, 
 	userLogin as userLoginAction, 
 	translate, 
@@ -98,11 +98,11 @@ class LoginRegisterTabbedForm_ extends Component {
 		}
 		else if (redirect === "forgot_password") {
 			// TODO: link should be current locatiokn
-			this.props.passwordReset(masterKey, { email: auth.username, link: 'http://localhost:3000/#/password-resets'})
+			this.props.passwordReset(masterKey, { email: auth.username, link: host +'/#/password-resets'})
 		} 
 		else if (redirect === "register") {
 			// TODO: link should be current locatiokn
-			this.props.registerRequest({ email: auth.email, link: 'http://localhost:3000/#/register'})
+			this.props.registerRequest({ email: auth.email, link: host +'/#/register'})
 		}
 	}
 
