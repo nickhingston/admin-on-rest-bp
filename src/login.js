@@ -225,9 +225,9 @@ const enhance = compose(
         form: 'signIn',
         validate: (values, props) => {
             const errors = {};
-			const { translate } = props;
-			if (!values.username) errors.username = translate('mothership_admin.validation.required');
-			if (!values.password) errors.password = translate('mothership_admin.validation.required');
+			// const { translate } = props;
+			// if (!values.username) errors.username = translate('mothership_admin.validation.required');
+			// if (!values.password) errors.password = translate('mothership_admin.validation.required');
 			// if (!values.email) errors.email	 = translate('mothership_admin.validation.required');
             return errors;
 		},
