@@ -19,6 +19,7 @@ import {
 	SelectInput, 
 	SimpleForm, 
 	TextInput, 
+	BooleanInput,
 	Filter,
 	Responsive,
 	SimpleList,
@@ -94,6 +95,8 @@ export const PlatesEdit = (props) => {
 			<TextInput source="category" />
 			<TextInput source="manufacturer" />
 			<TextInput source="defaultItemIndex" />
+			<TextInput source="defaultItemIndex" />
+			<BooleanInput source="flippable" />
 			<TextInput source="flipAxis" />
 			
 			<ReferenceManyField label="Items" reference="plate-items" source="items" target="family">	
@@ -119,6 +122,7 @@ export const PlatesCreate = (props) => {
 				<TextInput source="category" />
 				<TextInput source="manufacturer" />
 				<TextInput source="defaultItemIndex" />
+				<BooleanInput source="flippable" />
 				<TextInput source="flipAxis" />
 			</SimpleForm>
 		</Create>
