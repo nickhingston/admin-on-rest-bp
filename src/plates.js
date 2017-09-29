@@ -95,7 +95,6 @@ export const PlatesEdit = (props) => {
 			<TextInput source="category" />
 			<TextInput source="manufacturer" />
 			<TextInput source="defaultItemIndex" />
-			<TextInput source="defaultItemIndex" />
 			<BooleanInput source="flippable" />
 			<TextInput source="flipAxis" />
 			
