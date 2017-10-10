@@ -44,15 +44,14 @@ export default (apiUrl, masterKey) => {
 		}
 		// called when the user clicks on the logout button
 		if (type === AUTH_LOGOUT) {
-			localStorage.removeItem('token');
+			localStorage.clear();  // remove token
 			return Promise.resolve();
 		}
 		// called when the API returns an error
 		if (type === AUTH_ERROR) {
 			const { status } = params;
 			if (status === 401) { // log em out
-				localStorage.removeItem('username');
-				localStorage.removeItem('token');
+				localStorage.clear();
 				return Promise.reject();
 			}
 			return Promise.resolve();

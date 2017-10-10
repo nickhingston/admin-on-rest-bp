@@ -98,10 +98,13 @@ class LoginRegisterTabbedForm_ extends Component {
 		}
 		else if (redirect === "forgot_password") {
 			// TODO: link should be current locatiokn
+			localStorage.clear();  // ensure no previous token/data there...
 			this.props.passwordReset(masterKey, { email: auth.username, link: host +'/#/password-resets'})
 		} 
 		else if (redirect === "register") {
-			// TODO: link should be current locatiokn
+			// TODO: link should be current location
+			
+			localStorage.clear();  // ensure no previous token/data there...
 			this.props.registerRequest({ email: auth.email, link: host +'/#/register'})
 		}
 	}
