@@ -45,7 +45,7 @@ export const PlateItemList = (props) => {
 const PlateItemFilter = (props) => (
     <Filter {...props}>
         <TextInput label="Search" source="q" alwaysOn />
-        <ReferenceInput label="Plates" source="family" reference="plates" perPage={100}  allowEmpty>
+        <ReferenceInput label="Plates" source="family" reference="plates" perPage={500}  allowEmpty>
 			<SelectInput optionText={record => (record.manufacturer + " " + record.familyName)} />
 		</ReferenceInput>
     </Filter>
@@ -62,7 +62,7 @@ export const PlateItemEdit = (props) => {
 
     <Edit title={<PlateItemTitle />} {...props}>
         <SimpleForm>
-			<ReferenceInput label="Plates" source="family" reference="plates" perPage={100} allowEmpty>
+			<ReferenceInput label="Plates" source="family" reference="plates" perPage={500} allowEmpty>
             		<SelectInput optionText={record => (record.manufacturer + " " + record.familyName)} />
         	</ReferenceInput>
             <DisabledInput source="id" />	
@@ -82,7 +82,7 @@ export const PlateItemCreate = (props) => {
 		<Create {...props}>
 			<SimpleForm>
 				
-				<ReferenceInput label="Plates" source="family" reference="plates" perPage={100} allowEmpty>
+				<ReferenceInput label="Plates" source="family" reference="plates" perPage={500} allowEmpty>
             		<SelectInput optionText={record => (record.manufacturer + " " + record.familyName)} />
         		</ReferenceInput>
 
@@ -103,7 +103,7 @@ export const PlateItemShow = (props) => {
 		<Show {...props}>
 			<SimpleForm>
 				
-				<ReferenceInput label="Plates" source="family" reference="plates" perPage={100} allowEmpty>
+				<ReferenceInput label="Plates" source="family" reference="plates" perPage={500} allowEmpty>
             		<SelectInput optionText={record => (record.manufacturer + " " + record.familyName)} />
         		</ReferenceInput>
 
