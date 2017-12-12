@@ -95,6 +95,7 @@ export const PlatesEdit = (props) => {
 			<TextInput source="category" />
 			<TextInput source="manufacturer" />
 			<TextInput source="defaultItemIndex" />
+			<TextInput source="publishState" />
 			<BooleanInput source="flippable" />
 			<TextInput source="flipAxis" />
 			
@@ -121,6 +122,7 @@ export const PlatesCreate = (props) => {
 				<TextInput source="category" />
 				<TextInput source="manufacturer" />
 				<TextInput source="defaultItemIndex" />
+				<TextInput source="publishState" />
 				<BooleanInput source="flippable" />
 				<TextInput source="flipAxis" />
 			</SimpleForm>
