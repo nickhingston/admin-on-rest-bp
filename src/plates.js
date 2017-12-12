@@ -4,6 +4,8 @@ import React from 'react';
 import { CardActions } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import NavigationRefresh from 'material-ui/svg-icons/navigation/refresh';
+import { push } from 'react-router-redux';
+import { connect } from 'react-redux';
 
 import { 
 	List, 
@@ -71,7 +73,17 @@ const PlatesFilter = (props) => (
     </Filter>
 );
 
-const PlatesEditActions = ({ basePath, data, refresh }) => (
+
+const CreatePlateItemButton = connect(null, {push: push })((props) => (
+	<FlatButton primary label="Add item" onClick={() => {
+		props.push("/plate-items/create", {plate: props.plateId});
+	}
+	}/>
+));
+
+
+
+const PlatesEditActions = ({ basePath, data, refresh, history }) => (
     <CardActions >
         <ShowButton basePath={basePath} record={data} />
         <ListButton basePath={basePath} />
@@ -79,7 +91,7 @@ const PlatesEditActions = ({ basePath, data, refresh }) => (
         <FlatButton primary label="Refresh" onClick={refresh} icon={<NavigationRefresh />} />
         {/* Add your custom actions */}
         {/* <FlatButton primary label="Add plate" onClick={customAction} /> */}
-		<CreateButton label="Add item" basePath="/plate-items" />
+		<CreatePlateItemButton plateId={data && data.id}/>
     </CardActions>
 );
 

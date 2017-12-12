@@ -57,7 +57,6 @@ export const PlateItemTitle = ({ record }) => {
 
 
 export const PlateItemEdit = (props) => {
-	
 	return (
 
     <Edit title={<PlateItemTitle />} {...props}>
@@ -77,12 +76,12 @@ export const PlateItemEdit = (props) => {
 };
 
 export const PlateItemCreate = (props) => {
-	
+	const plateId = props.location.state && props.location.state.plate;
 	return (
 		<Create {...props}>
 			<SimpleForm>
 				
-				<ReferenceInput label="Plates" source="family" reference="plates" perPage={500} allowEmpty>
+				<ReferenceInput label="Plates" source="family" reference="plates" defaultValue={plateId} perPage={500}>
             		<SelectInput optionText={record => (record.manufacturer + " " + record.familyName)} />
         		</ReferenceInput>
 
