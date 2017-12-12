@@ -58,7 +58,7 @@ const AdminMS = ({
         ].map(fork));
     };
     const sagaMiddleware = createSagaMiddleware();
-    const routerHistory = history || createHistory();
+    const routerHistory = history || createHistory({basename: "/admin"});
     const store = createStore(resettableAppReducer, initialState, compose(
         applyMiddleware(logger, sagaMiddleware, routerMiddleware(routerHistory)),
         window.devToolsExtension ? window.devToolsExtension() : f => f,
