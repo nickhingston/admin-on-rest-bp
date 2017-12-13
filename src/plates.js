@@ -29,7 +29,9 @@ import {
 	ShowButton,
 	ListButton,
 	DeleteButton,
-	CreateButton
+	CreateButton,
+	AutocompleteInput
+	 
 } from 'admin-on-rest';
 
 
@@ -107,7 +109,11 @@ export const PlatesEdit = (props) => {
 			<TextInput source="category" />
 			<TextInput source="manufacturer" />
 			<TextInput source="defaultItemIndex" />
-			<TextInput source="publishState" />
+			<AutocompleteInput source="publishState" options={{ filter: (item) => item }} choices={[
+				{ id: 'test', name: 'Test' },
+				{ id: 'published', name: 'Published' },
+				{ id: 'removed', name: 'Removed' },
+			]} />
 			<BooleanInput source="flippable" />
 			<TextInput source="flipAxis" />
 			
@@ -133,8 +139,12 @@ export const PlatesCreate = (props) => {
 				<TextInput source="familyName" />
 				<TextInput source="category" />
 				<TextInput source="manufacturer" />
-				<TextInput source="defaultItemIndex" />
-				<TextInput source="publishState" />
+				<TextInput source="defaultItemIndex" defaultValue="0" />
+				<AutocompleteInput source="publishState" defaultValue="test" options={{ filter: (item) => item }} choices={[
+					{ id: 'test', name: 'Test' },
+					{ id: 'published', name: 'Published' },
+					{ id: 'removed', name: 'Removed' },
+				]} />
 				<BooleanInput source="flippable" />
 				<TextInput source="flipAxis" />
 			</SimpleForm>
