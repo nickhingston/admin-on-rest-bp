@@ -37,7 +37,7 @@ const AdminMS = ({
     menu,
     restClient,
     theme,
-    title = 'Admin on REST',
+    title = 'vPOP PRO Admin',
     loginPage,
     logoutButton,
     initialState,
