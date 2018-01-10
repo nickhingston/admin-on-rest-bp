@@ -61,8 +61,8 @@ const CaseTitle = ({ record }) => {
 const CaseFilter = (props) => (
     <Filter {...props}>
         <TextInput label="Search" source="q" alwaysOn />
-        <ReferenceInput label="User" source="user.id" reference="users" allowEmpty>
-            <SelectInput optionText="email" />
+        <ReferenceInput label="User" source="user.id" reference="users" perPage={1000} allowEmpty>
+            <SelectInput optionText="email" optionValue="id"/>
         </ReferenceInput>
     </Filter>
 );
