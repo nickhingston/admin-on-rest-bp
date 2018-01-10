@@ -20,7 +20,8 @@ import {
 	Filter,
 	Responsive,
 	SimpleList,
-	ShowButton
+	ShowButton,
+	AutocompleteInput
 } from 'admin-on-rest';
 
 
@@ -61,7 +62,7 @@ const CaseTitle = ({ record }) => {
 const CaseFilter = (props) => (
     <Filter {...props}>
         <TextInput label="Search" source="q" alwaysOn />
-        <ReferenceInput label="User" source="user.id" reference="users" perPage={1000} allowEmpty>
+        <ReferenceInput label="User" source="user.id" reference="users" perPage={500} allowEmpty>
             <SelectInput optionText="email" optionValue="id"/>
         </ReferenceInput>
     </Filter>
@@ -74,7 +75,7 @@ export const CaseEdit = (props) => {
         <SimpleForm>
             <DisabledInput source="id" />
 			{	
-				<ReferenceInput label="User" source="user.id" reference="users">
+				<ReferenceInput label="User" source="user.id" reference="users" perPage={500}>
 					<SelectInput optionText="email" />
 				</ReferenceInput>
 			}	
