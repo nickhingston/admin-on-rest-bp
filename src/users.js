@@ -63,6 +63,7 @@ export const UserEdit = (props) => {
 			<TextInput source="firstName" />
             <TextInput source="lastName" />
             <TextInput source="role" />
+            <TextInput source="trialEnd" />
         </SimpleForm>
     </Edit>
 )}
