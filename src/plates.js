@@ -13,26 +13,19 @@ import {
 	Edit, 
 	Create, 
 	Datagrid, 
-	ReferenceField, 
 	TextField, 
 	EditButton, 
 	DisabledInput, 
-	LongTextInput, 
-	ReferenceInput, 
-	SelectInput, 
 	SimpleForm, 
 	TextInput, 
 	BooleanInput,
 	Filter,
 	Responsive,
 	SimpleList,
-	ReferenceManyField,
 	ShowButton,
 	ListButton,
 	DeleteButton,
-	CreateButton,
 	AutocompleteInput,
-	ReferenceArrayField
 	 
 } from 'admin-on-rest';
 
@@ -109,7 +102,6 @@ const passParentRecord = (WrappedComponent) => {
 	  };
 }
 
-const ReferenceManyFieldWithParent = passParentRecord(ReferenceManyField);
 const EmbeddedArrayFieldWithParent = passParentRecord(EmbeddedArrayField);
 
 const setBasePath = (WrappedComponent) => {
@@ -127,24 +119,6 @@ const setBasePath = (WrappedComponent) => {
 
 const ShowButtonPlate = setBasePath(ShowButton);
 const EditButtonPlate = setBasePath(EditButton);
-
-const InlineDataGrid = (props) => {
-	console.log(props); //use this to see what props are being passed to 
-					   //Datagrid. All AOR components need a 'record' being passed to them that  //they display in Datagrid, record is an array.
-	const record = props.record.items;
-	const newProps = {...props }; //reassign the record field in the props
-	newProps.record = record;
-
-	return (
-		<Datagrid {...newProps} > 
-			<TextField source="id" />
-			<TextField source="name" />
-			<TextField source="code" />
-			{/* <RecordButton onClick={this.upClick} label="^" source=""/> */}
-			<ShowButton />
-			<EditButton />
-	</Datagrid>)
-  }
 
 export class PlatesEdit extends Component {
 	constructor(props) {
