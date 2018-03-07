@@ -1,12 +1,13 @@
 // in src/plates.js
-import React from 'react';
+import React, { Component } from 'react';
 
 import { CardActions } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import NavigationRefresh from 'material-ui/svg-icons/navigation/refresh';
 import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
-
+import RecordButton from './recordButton'
+import { EmbeddedArrayField } from 'aor-embedded-array'
 import { 
 	List, 
 	Edit, 
@@ -30,7 +31,8 @@ import {
 	ListButton,
 	DeleteButton,
 	CreateButton,
-	AutocompleteInput
+	AutocompleteInput,
+	ReferenceArrayField
 	 
 } from 'admin-on-rest';
 
@@ -97,39 +99,103 @@ const PlatesEditActions = ({ basePath, data, refresh, history }) => (
     </CardActions>
 );
 
-
-export const PlatesEdit = (props) => {
+const passParentRecord = (WrappedComponent) => {
 	
-	return (
+	return class extends React.Component {
+		render() {
+		  // Notice that we pass through any additional props
+		  return <WrappedComponent {...this.props} parentRecord={this.props.record} meta={{touched:false, error:null}}/>;
+		}
+	  };
+}
 
-    <Edit title={<PlatesTitle />} actions={<PlatesEditActions />}  {...props}>
-        <SimpleForm>
-            <DisabledInput source="id" />	
-            <TextInput source="familyName" />
-			<TextInput source="category" />
-			<TextInput source="manufacturer" />
-			<TextInput source="defaultItemIndex" />
-			<AutocompleteInput source="publishState" options={{ filter: (item) => item }} choices={[
-				{ id: 'test', name: 'Test' },
-				{ id: 'published', name: 'Published' },
-				{ id: 'removed', name: 'Removed' },
-			]} />
-			<BooleanInput source="flippable" />
-			<TextInput source="flipAxis" />
-			
-			<ReferenceManyField label="Items" reference="plate-items" source="items" target="family">	
-                <Datagrid>
-                    <TextField source="id" />
-                    <TextField source="name" />
-					<TextField source="code" />
-					<ShowButton />
-					<EditButton />
-                </Datagrid>
-            </ReferenceManyField>
-        </SimpleForm>
-	</Edit>
-	)
-};
+const ReferenceManyFieldWithParent = passParentRecord(ReferenceManyField);
+const EmbeddedArrayFieldWithParent = passParentRecord(EmbeddedArrayField);
+
+const setBasePath = (WrappedComponent) => {
+	
+	return class extends React.Component {
+		render() {
+			const {source, record } = this.props;
+			const sourceParts = source.split('[');
+			const item = record[sourceParts[0]][sourceParts[1].split(']')[0]];
+		  // Notice that we pass through any additional props
+		  return <WrappedComponent {...this.props} basePath="/plate-items" record={item}/>;
+		}
+	  };
+}
+
+const ShowButtonPlate = setBasePath(ShowButton);
+const EditButtonPlate = setBasePath(EditButton);
+
+const InlineDataGrid = (props) => {
+	console.log(props); //use this to see what props are being passed to 
+					   //Datagrid. All AOR components need a 'record' being passed to them that  //they display in Datagrid, record is an array.
+	const record = props.record.items;
+	const newProps = {...props }; //reassign the record field in the props
+	newProps.record = record;
+
+	return (
+		<Datagrid {...newProps} > 
+			<TextField source="id" />
+			<TextField source="name" />
+			<TextField source="code" />
+			{/* <RecordButton onClick={this.upClick} label="^" source=""/> */}
+			<ShowButton />
+			<EditButton />
+	</Datagrid>)
+  }
+
+export class PlatesEdit extends Component {
+	constructor(props) {
+		super(props);
+		this.upClick = this.upClick.bind(this);
+	}
+	upClick(record) {
+		console.log(record)
+		console.log(this.plateFamilyRecord)
+		let i = this.plateFamilyRecord.items.indexOf(record)
+		if (i > 0) {
+			let items = [...this.plateFamilyRecord.items];
+			items.splice(i-1, 0, items.splice(i, 1)[0]);
+			this.plateFamilyRecord.items = items;
+		}
+		this.setState({})
+	}
+	render() {
+		const {props} = this;
+		return (
+
+			<Edit title={<PlatesTitle />} actions={<PlatesEditActions />}  {...props}>
+				<SimpleForm>
+					<DisabledInput source="id" />	
+					<TextInput source="familyName" />
+					<TextInput source="category" />
+					<TextInput source="manufacturer" />
+					<TextInput source="defaultItemIndex" />
+					<AutocompleteInput source="publishState" options={{ filter: (item) => item }} choices={[
+						{ id: 'test', name: 'Test' },
+						{ id: 'published', name: 'Published' },
+						{ id: 'removed', name: 'Removed' },
+					]} />
+					<BooleanInput source="flippable" />
+					<TextInput source="flipAxis" />
+					
+					<EmbeddedArrayFieldWithParent source="items" ref={(ref) => this.plateFamilyRecord = (ref && ref.props.record)}>	
+							<TextField source="id" style={{display: "inline-block", margin:"10px"}}/>
+							<TextField source="name" style={{display: "inline-block", margin:"10px"}}/>
+							<TextField source="code" style={{display: "inline-block", margin:"10px"}}/>
+							<RecordButton onClick={this.upClick} label="^" style={{display: "inline-block", margin:"10px"}}/>
+							<ShowButtonPlate basePath="/plate-items" style={{display: "inline-block", margin:"10px"}}/>
+							<EditButtonPlate style={{display: "inline-block", margin:"10px"}}/>
+					</EmbeddedArrayFieldWithParent>
+					
+				</SimpleForm>
+			</Edit>
+			)
+	}
+}
+
 
 export const PlatesCreate = (props) => {
 	
