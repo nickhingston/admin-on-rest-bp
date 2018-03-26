@@ -14,7 +14,8 @@ import {
 	EmailField,
 	TextField,
 	ImageField,
-	EditButton
+    EditButton,
+    DateInput
 } from 'admin-on-rest';
 
 const SmallImageField = function (ref) {
@@ -56,14 +57,14 @@ const UserEmail = ({ record }) => {
 export const UserEdit = (props) => {
     return (
     <Edit title={<UserEmail />} {...props}>
-        <SimpleForm>
+        <SimpleForm validate={validateUserSave}>
 			<ImageField source="picture" />
             <DisabledInput source="id" />
             <DisabledInput source="email" />
 			<TextInput source="firstName" />
             <TextInput source="lastName" />
             <TextInput source="role" />
-            <TextInput source="trialEnd" />
+            <DateInput source="trialEnd" />
             <TextInput source="subscription" />
         </SimpleForm>
     </Edit>
@@ -102,4 +103,16 @@ export const UserCreateWithAdmin = (props) => {
 			</SimpleForm>
 	 	</Create> 
 	);
+};
+
+const validateUserSave = (values) => {
+    const errors = {};
+    if (!values.trialEnd) {
+        errors.trialEnd = ['TrialEnd is required'];
+    }
+    else {
+        values.trialEnd = values.trialEnd.valueOf();
+    }
+    
+    return errors
 };
