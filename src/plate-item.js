@@ -1,15 +1,14 @@
 // in src/plates.js
 import React from 'react'
-import get from 'lodash.get'
 import SVGField from './mui/field/SVGField'
 import { 
 	List, 
 	Edit,
 	Show,
-	Create, 
+	Create,
 	Datagrid, 
-	ReferenceField, 
-	TextField, 
+	TextField,
+	DeleteButton,
 	EditButton, 
 	DisabledInput, 
 	LongTextInput, 
@@ -18,12 +17,10 @@ import {
 	SimpleForm, 
 	TextInput, 
 	Filter,
-	Responsive,
-	SimpleList,
-	ReferenceManyField,
-	ShowButton,
-	ImageField
+	Responsive
 } from 'admin-on-rest';
+
+import { CardActions } from 'material-ui/Card';
 
 export const PlateItemList = (props) => {
 	return (
@@ -55,11 +52,16 @@ export const PlateItemTitle = ({ record }) => {
     return <span>Plate Type: {record ? `"${record.name}"` : ''}</span>;
 };
 
+const PlateItemEditActions = ({ basePath, data, refresh, history }) => (
+    <CardActions >
+        <DeleteButton basePath={basePath} record={data} />
+    </CardActions>
+);
 
 export const PlateItemEdit = (props) => {
 	return (
 
-    <Edit title={<PlateItemTitle />} {...props}>
+    <Edit title={<PlateItemTitle />} actions={<PlateItemEditActions />} {...props}>
         <SimpleForm>
 			<ReferenceInput label="Plates" source="family" reference="plates" perPage={500} allowEmpty>
             		<SelectInput optionText={record => (record.manufacturer + " " + record.familyName)} />
@@ -97,7 +99,6 @@ export const PlateItemCreate = (props) => {
 
 export const PlateItemShow = (props) => {
 	console.log("PlateItemShow:", props);
-	const record = props.record || {};
 	return (
 		<Show {...props}>
 			<SimpleForm>
