@@ -19,7 +19,7 @@ export default ({ resources, onMenuTap, logout }) => {
 	//console.log("resources:", resources);
 	return (
 		<div>
-			<MenuItemLink to="/posts" primaryText="Posts" onTouchTap={onTouchTapFn} icon={PostIcon}/>
+			{isAdminUser && <MenuItemLink to="/posts" primaryText="Posts" onTouchTap={onTouchTapFn} icon={PostIcon}/> }
 			{isAdminUser && <MenuItemLink to="/users" primaryText="Users" onTouchTap={onTouchTapFn} icon={UserIcon}/> }
 			{isAdminUser && <MenuItemLink to="/cases" primaryText="Cases" onTouchTap={onTouchTapFn} icon={CaseIcon}/> }
 			{isAdminUser &&	<MenuItemLink to="/plates" primaryText="Plates" onTouchTap={onTouchTapFn} icon={PlatesIcon}/> }
