@@ -1,6 +1,6 @@
 // in src/Cases.js
 import React from 'react';
-import get from 'lodash.get'
+
 import { 
 	List, 
 	Edit, 
@@ -20,8 +20,8 @@ import {
 	Filter,
 	Responsive,
 	SimpleList,
-	ShowButton,
-	AutocompleteInput
+	ShowButton
+	// ,AutocompleteInput
 } from 'admin-on-rest';
 
 

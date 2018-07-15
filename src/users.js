@@ -18,6 +18,18 @@ import {
     DateInput
 } from 'admin-on-rest';
 
+const validateUserSave = (values) => {
+    const errors = {};
+    if (!values.trialEnd) {
+        errors.trialEnd = ['TrialEnd is required'];
+    }
+    else {
+        values.trialEnd = values.trialEnd.valueOf();
+    }
+    
+    return errors
+};
+
 const SmallImageField = function (ref) {
 	var imageField = ImageField(ref);
 	imageField.props.children.props.style.maxHeight = '2rem';
@@ -105,16 +117,4 @@ export const UserCreateWithAdmin = (props) => {
 			</SimpleForm>
 	 	</Create> 
 	);
-};
-
-const validateUserSave = (values) => {
-    const errors = {};
-    if (!values.trialEnd) {
-        errors.trialEnd = ['TrialEnd is required'];
-    }
-    else {
-        values.trialEnd = values.trialEnd.valueOf();
-    }
-    
-    return errors
 };
