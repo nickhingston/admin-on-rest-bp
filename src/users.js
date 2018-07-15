@@ -73,7 +73,7 @@ export const UserEdit = (props) => {
     <Edit title={<UserEmail />} {...props}>
         <SimpleForm validate={validateUserSave}>
 			<ImageField source="picture" />
-            <DisabledInput source="id" />
+            {isAdminUser  && <DisabledInput source="id" /> }
             <DisabledInput source="email" />
 			<TextInput source="firstName" />
             <TextInput source="lastName" />
