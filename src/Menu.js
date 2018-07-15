@@ -12,7 +12,8 @@ function onTouchTapFn() {
 }
 
 export default ({ resources, onMenuTap, logout }) => {
-	let isAdminUser = (localStorage.user ? JSON.parse(localStorage.user).role === 'admin': false);
+	const user = localStorage.user && JSON.parse(localStorage.user);
+	const isAdminUser = (user && user.role === 'admin');
 	if (!localStorage.token) {
 		return <div>{logout}</div>;
 	}
@@ -23,6 +24,7 @@ export default ({ resources, onMenuTap, logout }) => {
 			{isAdminUser && <MenuItemLink to="/users" primaryText="Users" onTouchTap={onTouchTapFn} icon={UserIcon}/> }
 			{isAdminUser && <MenuItemLink to="/cases" primaryText="Cases" onTouchTap={onTouchTapFn} icon={CaseIcon}/> }
 			{isAdminUser &&	<MenuItemLink to="/plates" primaryText="Plates" onTouchTap={onTouchTapFn} icon={PlatesIcon}/> }
+			{<MenuItemLink to={"/users/" + user.id} primaryText="Me" onTouchTap={onTouchTapFn} icon={UserIcon}/> }
 			{logout}
 		</div>
 	)

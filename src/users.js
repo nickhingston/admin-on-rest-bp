@@ -55,6 +55,8 @@ const UserEmail = ({ record }) => {
 };
 
 export const UserEdit = (props) => {
+    const user = localStorage.user && JSON.parse(localStorage.user);
+	const isAdminUser = (user && user.role === 'admin');
     return (
     <Edit title={<UserEmail />} {...props}>
         <SimpleForm validate={validateUserSave}>
@@ -63,9 +65,9 @@ export const UserEdit = (props) => {
             <DisabledInput source="email" />
 			<TextInput source="firstName" />
             <TextInput source="lastName" />
-            <TextInput source="role" />
-            <DateInput source="trialEnd" />
-            <TextInput source="subscription" />
+            {isAdminUser  && <TextInput source="role" /> }
+            {isAdminUser  && <DateInput source="trialEnd" /> }
+            {isAdminUser  && <TextInput source="subscription" /> }
         </SimpleForm>
     </Edit>
 )}

@@ -68,6 +68,7 @@ const App = () => {
         <Resource name="plates" list={PlatesList} edit={PlatesEdit} create={PlatesCreate} remove={Delete} icon={PlatesIcon} />
 
         <Resource name="plate-items" list={PlateItemList} show={PlateItemShow} edit={PlateItemEdit} create={PlateItemCreate} remove={Delete}/>
+        <Resource name="users/me" list={UserList} edit={UserEdit} create={UserCreate} remove={Delete} icon={UserIcon} />
         <Resource name="xrays" />
     </AdminMS>
 )};

@@ -1,6 +1,6 @@
 {
-  "name": "test-admin",
-  "version": "0.1.0",
+  "name": "vpop-admin",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "admin-on-rest": "^1.2.0",
