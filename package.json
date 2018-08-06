@@ -10,7 +10,10 @@
     "react-scripts": "0.9.5",
     "redux-logger": "^3.0.6"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "braintree-dropin-react": "^0.1.0",
+    "braintree-web-drop-in": "^1.11.0"
+  },
   "scripts": {
     "start": "node -r dotenv/config ./node_modules/.bin/react-scripts start dotenv_config_path=.env",
     "build": "react-scripts build",

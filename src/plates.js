@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { CardActions } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import NavigationRefresh from 'material-ui/svg-icons/navigation/refresh';
+import get from 'lodash.get';
 import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
 import RecordButton from './recordButton'
@@ -109,8 +110,7 @@ const setBasePath = (WrappedComponent) => {
 	return class extends React.Component {
 		render() {
 			const {source, record } = this.props;
-			const sourceParts = source.split('[');
-			const item = record[sourceParts[0]][sourceParts[1].split(']')[0]];
+			const item = get(record, source);
 		  // Notice that we pass through any additional props
 		  return <WrappedComponent {...this.props} basePath="/plate-items" record={item}/>;
 		}

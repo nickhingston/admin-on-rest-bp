@@ -69,11 +69,13 @@ export default (apiUrl, options , httpClient = fetchUtils.fetchJson) => {
             url = `${apiUrl}/${resource}?${queryParameters(query)}`;
             break;
         }
-        case UPDATE:
-            url = `${apiUrl}/${resource}/${params.id}?${queryParameters({})}`;
+        case UPDATE: {
+            const { id, data, ...rest } = params;
+            url = `${apiUrl}/${resource}/${id}?${queryParameters(rest)}`;
             options.method = 'PUT';
-            options.body = JSON.stringify(params.data);
+            options.body = JSON.stringify(data);
             break;
+        }
         case CREATE:    
             const query = {}
             if (params.access_token) {

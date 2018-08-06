@@ -1,5 +1,10 @@
 // in src/users.js
 import React from 'react';
+import { push } from 'react-router-redux';
+import { connect } from 'react-redux';
+import { CardActions } from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
+import NavigationRefresh from 'material-ui/svg-icons/navigation/refresh';
 import { 
     Create,
 	Edit,
@@ -15,8 +20,11 @@ import {
 	TextField,
 	ImageField,
     EditButton,
-    DateInput
+    DateInput,
+    SelectInput
 } from 'admin-on-rest';
+
+import BraintreeDropIn from "./BraintreeDropIn.js";
 
 const validateUserSave = (values) => {
     const errors = {};
@@ -66,20 +74,61 @@ const UserEmail = ({ record }) => {
     return <span>{record.email}</span>;
 };
 
+const CreateAccountButton = connect(null, {push: push })((props) => (
+	<FlatButton primary label="Create Account" onClick={() => {
+		props.push("/accounts/create", {user: props.userId});
+	}
+	}/>
+));
+
+const ViewAccountButton = connect(null, {push: push })((props) => (
+	<FlatButton primary label="Show Account" onClick={() => {
+		props.push("/accounts/" + props.accountId, {user: props.userId});
+	}
+	}/>
+));
+
+const UserEditActions = ({ basePath, data, refresh, history }) => {
+    const { account } = data || {};
+    return (
+        <CardActions >
+            {/* <ShowButton basePath={basePath} record={data} />
+            <ListButton basePath={basePath} />
+            <DeleteButton basePath={basePath} record={data} /> */}
+            <FlatButton primary label="Refresh" onClick={refresh} icon={<NavigationRefresh />} />
+            {/* Add your custom actions */}
+            {/* <FlatButton primary label="Add plate" onClick={customAction} /> */}
+            { !account && <CreateAccountButton userId={data && data.id}/> }
+            { account && <ViewAccountButton accountId={account}/> }
+        </CardActions>
+    );
+};
+
 export const UserEdit = (props) => {
     const user = localStorage.user && JSON.parse(localStorage.user);
-	const isAdminUser = (user && user.role === 'admin');
+    const isAdminUser = (user && user.role === 'admin');
+    const account = user && user.account;
     return (
-    <Edit title={<UserEmail />} {...props}>
+    <Edit title={<UserEmail />} actions={<UserEditActions />} {...props}>
         <SimpleForm validate={validateUserSave}>
 			<ImageField source="picture" />
             {isAdminUser  && <DisabledInput source="id" /> }
-            <DisabledInput source="email" />
-			<TextInput source="firstName" />
-            <TextInput source="lastName" />
-            {isAdminUser  && <TextInput source="role" /> }
+            <DisabledInput source="email"/>
+			<TextInput label="First Name" source="firstName" />
+            <TextInput label="Last Name" source="lastName" />
+            {isAdminUser  && <SelectInput label="Role" source="role" choices={[
+                                { id: 'admin', name: 'Admin' },
+                                { id: 'user', name: 'User' }
+                            ]} />}
             {isAdminUser  && <DateInput source="trialEnd" /> }
             {isAdminUser  && <TextInput source="subscription" /> }
+            {account && <SelectInput label="Account Role" source="accountRole" choices={[
+                                { id: 'admin', name: 'Admin' },
+                                { id: 'user', name: 'User' }
+                            ]} /> }
+            {!account && <BraintreeDropIn currency="GBP" total="12.50" success={(a) => {
+                console.log("complete:", a);
+            }} />}
         </SimpleForm>
     </Edit>
 )}
