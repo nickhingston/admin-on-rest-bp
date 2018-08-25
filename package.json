@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "admin-on-rest": "^1.2.0",
     "aor-embedded-array": "0.0.8",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
+    "react": "^15.6.2",
+    "react-dom": "^15.6.2",
     "react-scripts": "0.9.5",
     "redux-logger": "^3.0.6"
   },
   "devDependencies": {
+    "admin-on-rest": "^1.4.1",
     "braintree-dropin-react": "^0.1.0",
     "braintree-web-drop-in": "^1.11.0"
   },

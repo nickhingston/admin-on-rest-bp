@@ -3,7 +3,9 @@ import React from "react";
 import braintree from "braintree-web-drop-in";
 import BraintreeDropin from "braintree-dropin-react";
 
-const apiUrl = "http://localhost:9000/api/v1";
+import MuiFlatButton from 'material-ui/FlatButton';
+
+const apiUrl = process.env.REACT_APP_SERVICE_API;
 // renderSubmitButton.propTypes = {
 //   onClick: PropTypes.func.isRequired,
 //   isDisabled: PropTypes.bool.isRequired,
@@ -94,14 +96,15 @@ class BraintreeDropInComponent extends React.Component {
   renderSubmitButton = ({ onClick, isDisabled, text }) => {
     if (this.state.dropinInstance) {
       return (
-        <button
-          onClick={onClick}
-          disabled={isDisabled}
-          className="ui blue button"
-          style={{ float: "right" }}
-        >
-          {text}
-        </button>
+        <MuiFlatButton primary key="add-user-button" label="Set Payment Method" onClick={onClick} />
+        // <button
+        //   onClick={onClick}
+        //   disabled={isDisabled}
+        //   className="ui blue button"
+        //   style={{ float: "right" }}
+        // >
+        //   {text}
+        // </button>
       );
     }
     return null;

@@ -4,12 +4,12 @@
 
 import React from 'react';
 import { /*jsonServerRestClient,*/ 
-    // Admin,
+    Admin,
     Resource,
     Delete,
     resolveBrowserLocale} from 'admin-on-rest';
 
-import AdminMS from './AdminMS'
+// import Admin from './AdminMS'
 
 import Login from'./login';
 
@@ -36,11 +36,14 @@ import registerSaga, {registerGetReducer as registrationObj} from './registerSag
 import { passwordSaga } from './password'
 import enMessages from './i18n/messages'
 
+import createHistory from 'history/createBrowserHistory';
+
 
 const messages = {
     en: enMessages,
 };
 
+const history = createHistory({basename: "/admin"});
 const apiUrl = process.env.REACT_APP_SERVICE_API;
 
 // TODO: need a way of /auth requests being redirected 
@@ -49,11 +52,12 @@ const masterKey = process.env.REACT_APP_MASTER_KEY;
 const App = () => {
   //let isAdminUser = (localStorage.user ? JSON.parse(localStorage.user).role === 'admin': false);
   return(
-    <AdminMS  customRoutes={customRoutes} 
+    <Admin  customRoutes={customRoutes} 
             loginPage={Login} 
             authClient={authClient(apiUrl, masterKey)} 
             dashboard={Dashboard} 
-            restClient={restClient(apiUrl)} 
+            restClient={restClient(apiUrl)}
+            history={history}
             menu={Menu} 
             local={resolveBrowserLocale()} 
             messages={messages}
@@ -71,7 +75,7 @@ const App = () => {
         <Resource name="plate-items" list={PlateItemList} show={PlateItemShow} edit={PlateItemEdit} create={PlateItemCreate} remove={Delete}/>
         <Resource name="accounts" list={AccountList} show={AccountShow} edit={AccountEdit} create={AccountCreate} remove={Delete}/>
         <Resource name="xrays" />
-    </AdminMS>
+    </Admin>
 )};
 
 export default App;
