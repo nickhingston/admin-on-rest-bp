@@ -129,7 +129,7 @@ export const UserEdit = (props) => {
                                 { id: 'admin', name: 'Admin' },
                                 { id: 'user', name: 'User' }
                             ]} /> }
-            {!account && <BraintreeDropIn currency="GBP" total="12.50" success={(a) => {
+            {false && !account && <BraintreeDropIn currency="GBP" total="12.50" success={(a) => {
                 console.log("complete:", a);
             }} />}
         </SimpleForm>
