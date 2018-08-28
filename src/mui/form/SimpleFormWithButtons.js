@@ -4,14 +4,17 @@ import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
-import getDefaultValues from 'admin-on-rest/lib/mui/form/getDefaultValues';
-import FormInput from 'admin-on-rest/lib/mui/form/FormInput';
-import Toolbar from 'admin-on-rest/lib/mui/form/Toolbar';
+import { getDefaultValues } from 'ra-core';
+import FormInput from 'ra-ui-materialui/lib/form/FormInput';
+import Toolbar from 'ra-ui-materialui/lib/form/Toolbar';
 
 const formStyle = { padding: '0 1em 1em 1em' };
 
 export class SimpleFormWithButtons extends Component {
-    handleSubmitWithRedirect = () => this.props.handleSubmit(values => this.props.save(values, "edit"));
+    handleSubmitWithRedirect = () => 
+        this.props.handleSubmit(values => 
+            this.props.save(values, "edit")
+        );
 
     render() {
         const {
@@ -28,10 +31,22 @@ export class SimpleFormWithButtons extends Component {
             <form className="simple-form">
                 <div style={formStyle} key={version}>
                     {Children.map(children, input => input && (
-                        <div key={input.props.source} className={`aor-input-${input.props.source}`} style={input.props.style}>
+                        <div key={input.props.source} className={`ra-input-${input.props.source}`} style={input.props.style}>
 							{
-                                (input.type.name === "FlatButton" && input) ||
+                                (!input.type.name && input) ||
+                                (input.type.name === "FlatButton" && input) ||                                
                                 (input.type.name === "TextField" && input) ||
+                                (input.type.name === "WithStyles" && input) ||
+                                // hack
+                                (input.props.id === "frequency-input" && <FormInput input={React.cloneElement(input, {
+                                    onChange: () => { 
+                                        setTimeout(() => {
+                                            this.handleSubmitWithRedirect()();    
+                                        }, 10);
+                                    }
+                                })} resource={resource} record={record} basePath={basePath} /> ) ||
+                                // end hack
+                                
                                 <FormInput input={input} resource={resource} record={record} basePath={basePath} /> 
                             } 
                         </div>

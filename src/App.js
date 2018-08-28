@@ -4,12 +4,12 @@
 
 import React from 'react';
 import { /*jsonServerRestClient,*/ 
-    Admin,
+    // Admin,
     Resource,
-    Delete,
-    resolveBrowserLocale} from 'admin-on-rest';
+    // Delete,
+    resolveBrowserLocale} from 'react-admin';
 
-// import Admin from './AdminMS'
+import Admin from './Admin'
 
 import Login from'./login';
 
@@ -28,20 +28,24 @@ import { PasswordEdit } from './password'
 
 import customRoutes from './customRoutes'
 
-import PostIcon from 'material-ui/svg-icons/action/book'
-import UserIcon from 'material-ui/svg-icons/social/group'
-import PlatesIcon from 'material-ui/svg-icons/social/group'
-import CaseIcon from 'material-ui/svg-icons/social/group'
-import registerSaga, {registerGetReducer as registrationObj} from './registerSaga'
+import PostIcon from '@material-ui/icons/Book'
+import UserIcon from '@material-ui/icons/People'
+import PlatesIcon from '@material-ui/icons/Group'
+import CaseIcon from '@material-ui/icons/Group'
+import registerSaga, { registerGetReducer as registrationObj} from './sagas/registerSaga'
+import subscriptionSaga, {subscriptionPlanReducer as subscriptionPlanObj } from './sagas/subscriptionSaga'
 import { passwordSaga } from './password'
-import enMessages from './i18n/messages'
+import enMessages from 'ra-language-english';
 
 import createHistory from 'history/createBrowserHistory';
 
+import msEnMessages from './i18n/messages'
 
 const messages = {
-    en: enMessages,
+    en: { ...msEnMessages, ...enMessages },
 };
+
+const i18nProvider = locale => messages.en;
 
 const history = createHistory({basename: "/admin"});
 const apiUrl = process.env.REACT_APP_SERVICE_API;
@@ -54,26 +58,28 @@ const App = () => {
   return(
     <Admin  customRoutes={customRoutes} 
             loginPage={Login} 
-            authClient={authClient(apiUrl, masterKey)} 
+            authProvider={authClient(apiUrl, masterKey)} 
             dashboard={Dashboard} 
-            restClient={restClient(apiUrl)}
+            dataProvider={restClient(apiUrl)}
             history={history}
             menu={Menu} 
+            title="vPOP Admin"
             local={resolveBrowserLocale()} 
-            messages={messages}
-            customSagas={[ registerSaga, passwordSaga ]}
-            customReducers={{ registrationObj }} >
+            i18nProvider={i18nProvider}
+            customSagas={[ registerSaga, passwordSaga, subscriptionSaga ]}
+            customReducers={{ registrationObj, subscriptionPlanObj }} >
 
 
-        <Resource name="posts" list={PostList} edit={PostEdit} create={PostCreate} remove={Delete} icon={PostIcon} />
-        <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate} remove={Delete} icon={UserIcon} />
-        <Resource name="cases" list={CaseList} edit={CaseEdit} create={CaseCreate} remove={Delete} icon={CaseIcon} />
+        <Resource name="posts" list={PostList} edit={PostEdit} create={PostCreate} icon={PostIcon} />
+        <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate} icon={UserIcon} />
+        <Resource name="cases" list={CaseList} edit={CaseEdit} create={CaseCreate} icon={CaseIcon} />
         <Resource name="password-resets" edit={PasswordEdit} icon={UserIcon} /> 
 
-        <Resource name="plates" list={PlatesList} edit={PlatesEdit} create={PlatesCreate} remove={Delete} icon={PlatesIcon} />
+        <Resource name="plates" list={PlatesList} edit={PlatesEdit} create={PlatesCreate} icon={PlatesIcon} />
 
-        <Resource name="plate-items" list={PlateItemList} show={PlateItemShow} edit={PlateItemEdit} create={PlateItemCreate} remove={Delete}/>
-        <Resource name="accounts" list={AccountList} show={AccountShow} edit={AccountEdit} create={AccountCreate} remove={Delete}/>
+        <Resource name="plate-items" list={PlateItemList} show={PlateItemShow} edit={PlateItemEdit} create={PlateItemCreate} />
+        <Resource name="accounts" list={AccountList} show={AccountShow} edit={AccountEdit} create={AccountCreate} />
+        <Resource name="xrays" />
         <Resource name="xrays" />
     </Admin>
 )};

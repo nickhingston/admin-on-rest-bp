@@ -17,7 +17,7 @@ import {
 	Filter,
 	Responsive,
 	SimpleList
-} from 'admin-on-rest';
+} from 'react-admin';
 
 
 export const PostList = (props) => (

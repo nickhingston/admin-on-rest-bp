@@ -9,6 +9,7 @@ import {
 	Datagrid, 
 	TextField,
 	DeleteButton,
+	ShowButton,
 	EditButton, 
 	DisabledInput, 
 	LongTextInput, 
@@ -18,9 +19,9 @@ import {
 	TextInput, 
 	Filter,
 	Responsive
-} from 'admin-on-rest';
+} from 'react-admin';
 
-import { CardActions } from 'material-ui/Card';
+import CardActions from '@material-ui/core/CardActions';
 
 export const PlateItemList = (props) => {
 	return (
@@ -54,7 +55,9 @@ export const PlateItemTitle = ({ record }) => {
 
 const PlateItemEditActions = ({ basePath, data, refresh, history }) => (
     <CardActions >
-        <DeleteButton basePath={basePath} record={data} />
+        <DeleteButton resource="plate-item" basePath={basePath} record={data} />
+		<ShowButton resource="plate-item" basePath={basePath} record={data} />
+		{/* <ShowButton resource="plate" basePath={"/plate/" + data.family} record={data} /> */}
     </CardActions>
 );
 
@@ -70,9 +73,9 @@ export const PlateItemEdit = (props) => {
 			<TextInput source="name" />
 			<TextInput source="code" />
 			<LongTextInput source="src" />
-			<SVGField style={{backgroundColor: "#000"}} source="src" />
+			<SVGField elStyle={{backgroundColor: "#000"}} source="src" />
 			<LongTextInput source="srcFront" />
-			<SVGField style={{backgroundColor: "#000"}} source="srcFront" />
+			<SVGField elStyle={{backgroundColor: "#000"}} source="srcFront" />
         </SimpleForm>
     </Edit>)
 };
@@ -117,8 +120,8 @@ export const PlateItemShow = (props) => {
 				<TextField source="id" />
 				<TextField source="name" />
 				<TextField source="code" />
-				<SVGField style={{backgroundColor: "#000"}} source="src" />
-				<SVGField style={{backgroundColor: "#000"}} source="srcFront" />
+				<SVGField elStyle={{backgroundColor: "#000"}} source="src" />
+				<SVGField elStyle={{backgroundColor: "#000"}} source="srcFront" />
 			</SimpleForm>
 		</Show>
 	);

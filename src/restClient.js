@@ -7,7 +7,7 @@ import {
     CREATE,
     UPDATE,
     DELETE
- } from 'admin-on-rest';
+ } from 'react-admin';
 
 var queryParameters = function(query) {
     if (localStorage.token) {
@@ -89,6 +89,7 @@ export default (apiUrl, options , httpClient = fetchUtils.fetchJson) => {
         case DELETE:
             url = `${apiUrl}/${resource}/${params.id}?${queryParameters({})}`;
             options.method = 'DELETE';
+            options.body = JSON.stringify(params.data);
             break;
         default:
             throw new Error(`Unsupported fetch action type ${type}`);
@@ -119,10 +120,15 @@ export default (apiUrl, options , httpClient = fetchUtils.fetchJson) => {
             }
             return { data: { ...params.data, id: json.id } };
         case DELETE:
-            return {data: {}}; // no json in DELETE method
+            return {data: { id: params.id }}; // no json in DELETE method
         default:
-            if (!json.id && json.token) { // password-resets doesnt return an id - fix that...
-                json.id = json.token
+            if (!json.id) {
+                if (json.token) { // password-resets doesnt return an id - fix that...
+                    json.id = json.token
+                }
+                else {
+                    json.id = params.id // plans does not return an id
+                }
             }
             return { data: json };
         }

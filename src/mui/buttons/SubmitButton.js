@@ -1,10 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import RaisedButton from 'material-ui/RaisedButton';
-import FlatButton from 'material-ui/FlatButton';
-//import CircularProgress from 'material-ui/CircularProgress';
-import { translate } from 'admin-on-rest';
+import Button from '@material-ui/core/Button';
+// import FlatButton from '@material-ui/core/Button';
+//import CircularProgress from '@material-ui/core/CircularProgress';
+import { translate } from 'react-admin';
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+    button: {
+      margin: theme.spacing.unit,
+    },
+    input: {
+      display: 'none',
+    },
+  });
 
 export class SubmitButton extends Component {
 
@@ -23,21 +33,22 @@ export class SubmitButton extends Component {
     }
 
     render() {
-        const { saving, label = 'aor.action.save', raised = true, translate, submitOnEnter/*, redirect*/ } = this.props;
+        const { saving, label = 'ra.action.save', raised = true, translate, submitOnEnter/*, redirect*/, classes } = this.props;
         const type = submitOnEnter ? 'submit' : 'button';
-        const ButtonComponent = raised ? RaisedButton : FlatButton;
+        // const ButtonComponent = raised ? RaisedButton : FlatButton;
         return (
-            <ButtonComponent
+            <Button
                 type={type}
-                label={label && translate(label)}
+                className={classes.button}
                  //icon={saving && saving.redirect === redirect ? <CircularProgress size={25} thickness={2} /> : <ContentSave />} 
                 onClick={this.handleClick}
-                primary={!saving}
+                color={!saving ? "primary" : "secondary"}
+                variant={raised ? "contained" : null}
                 style={{
                     margin: '10px 24px',
                     position: 'relative',
                 }}
-            />
+            >{label && translate(label)}</Button>
         );
     }
 }
@@ -56,6 +67,7 @@ SubmitButton.propTypes = {
         PropTypes.string,
         PropTypes.bool,
     ]),
+    classes: PropTypes.object.isRequired
 };
 
 SubmitButton.defaultProps = {
@@ -66,4 +78,4 @@ const mapStateToProps = state => ({
     saving: state.admin.saving,
 });
 
-export default connect(mapStateToProps)(translate(SubmitButton));
+export default connect(mapStateToProps)(withStyles(styles)(translate(SubmitButton)));

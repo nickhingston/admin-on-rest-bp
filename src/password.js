@@ -6,7 +6,7 @@ import {
 	ImageField,
 	CREATE,
 	showNotification
-} from 'admin-on-rest';
+} from 'react-admin';
 
 import { put, takeEvery } from 'redux-saga/effects';
 

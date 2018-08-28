@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { propTypes, reduxForm, Field } from 'redux-form';
+import { reduxForm, Field } from 'redux-form';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
 
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import { Card } from 'material-ui/Card';
-import { TextField, Avatar } from 'material-ui';
-import LockIcon from 'material-ui/svg-icons/action/lock-outline';
-import { cyan500, pinkA200 } from 'material-ui/styles/colors';
+// import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
+// import { getMuiTheme } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import { TextField, Avatar } from '@material-ui/core';
+import LockIcon from '@material-ui/icons/LockOutline';
 import SubmitButton from './mui/buttons/SubmitButton'
 
+import { withStyles } from '@material-ui/core/styles';
+
 import { passwordReset as passwordResetAction } from './password'
-import { registerRequest as registerRequestAction } from './registerSaga'
+import { registerRequest as registerRequestAction } from './sagas/registerSaga'
 
 // TODO: need a way of /auth requests being redirected 
 const masterKey = process.env.REACT_APP_MASTER_KEY;
@@ -22,62 +23,71 @@ import { defaultTheme,
 	userLogin as userLoginAction, 
 	translate, 
 	Notification,  
-	FormTab, 
+	FormTab,
+	TabbedForm, 
 	Toolbar
- } from 'admin-on-rest';
+ } from 'react-admin';
 
- import TabbedForm from './mui/form/TabbedForm'
+//  import TabbedForm from './mui/form/TabbedForm'
 
-const styles = {
+ const styles = theme => ({
     main: {
         display: 'flex',
         flexDirection: 'column',
         minHeight: '100vh',
+        height: '1px',
         alignItems: 'center',
-        justifyContent: 'center',
-    },
+        justifyContent: 'flex-start',
+        background: 'linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(https://vpop-pro.com/images/IMG_6726.jpg)',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+	},
+	textField: {
+		// marginLeft: theme.spacing.unit,
+		// marginRight: theme.spacing.unit,
+		// width: 300,
+	},
     card: {
-        minWidth: 300,
+        minWidth: 450,
+        marginTop: '6em',
     },
     avatar: {
         margin: '1em',
-        textAlign: 'center ',
-    },
-    form: {
-        padding: '0 1em 1em 1em',
-    },
-    input: {
         display: 'flex',
+        justifyContent: 'center',
     },
-};
-
-function getColorsFromTheme(theme) {
-    if (!theme) return { primary1Color: cyan500, accent1Color: pinkA200 };
-    const {
-        palette: {
-            primary1Color,
-            accent1Color,
-        },
-      } = theme;
-    return { primary1Color, accent1Color };
-}
+    icon: {
+        backgroundColor: theme.palette.secondary[500],
+    },
+});
 
 // see http://redux-form.com/6.4.3/examples/material-ui/
 const renderInput = ({ meta: { touched, error } = {}, input: { ...inputProps }, ...props }) => {
 	const txtFieldProps = {
-		floatingLabelText:props.floatingLabelText,
+		// floatingLabelText:props.floatingLabelText,
 		disabled:props.disabled,
 		type:props.type
 	}
 	return (
     <TextField
-        errorText={touched && error}
+        // errorText={touched && error}
         {...inputProps}
-        {...txtFieldProps}
+		{...txtFieldProps}
+		label={props.label}
+		style={ {marginTop: 20}}
+		// className={props.className}
         fullWidth
 />)
 }
 
+const sanitizeLoginRestProps = ({
+	userLogin,
+	passwordReset,
+	registerRequest,
+	anyTouched,
+	classes,
+	...rest
+}) => rest;
 
 class LoginRegisterTabbedForm_ extends Component {
 	constructor(props) {
@@ -110,12 +120,12 @@ class LoginRegisterTabbedForm_ extends Component {
 	}
 
 	render() {
-		const { submitting, translate } = this.props
+		const { submitting, translate, location, classes } = this.props
 
 		return (
-			<TabbedForm {...this.props} tabNumber={this.state.tab}  save={this.loginRegisterOrForgotPwd} tabPressed={this.tabPressed} toolbar={
+			<TabbedForm {...sanitizeLoginRestProps(this.props)} save={this.loginRegisterOrForgotPwd} toolbar={
 			
-					 this.state.tab === 0 ?
+					 (location && location.pathname === '/login') ?
 						<Toolbar>
 							<SubmitButton 	
 								label='mothership_admin.auth.sign_in'
@@ -140,16 +150,20 @@ class LoginRegisterTabbedForm_ extends Component {
 						</Toolbar>	
 					} >
 				<FormTab label={translate('mothership_admin.auth.sign_in')} >
-					<Field 
+					<Field
+						id="username"
 						name="username"
+						className={classes.textField}
 						component={renderInput}
-						floatingLabelText={translate('mothership_admin.auth.username')} 
+						label="User Name"
+						// floatingLabelText={translate('mothership_admin.auth.username')} 
 						disabled={submitting}
 					/>
 					<Field
 						name="password"	
 						component={renderInput}
-						floatingLabelText={translate('mothership_admin.auth.password')}
+						label="Password"
+						// floatingLabelText={translate('mothership_admin.auth.password')}
 						type="password"
 						disabled={submitting}
 					/>
@@ -157,8 +171,9 @@ class LoginRegisterTabbedForm_ extends Component {
 				<FormTab label={translate('mothership_admin.auth.sign_up')}>
 					<Field
 						name="email"
+						label="Email"
 						component={renderInput}
-						floatingLabelText="email"
+						// floatingLabelText="email"
 						disabled={submitting}
 					/>
 				</FormTab>
@@ -168,54 +183,51 @@ class LoginRegisterTabbedForm_ extends Component {
 	}
 }
 
-// const mapStateToProps = state => {
-// 	console.log(state)
-// 	return ({ reg: state.registrationObj })
-// }
-
 const LoginRegisterTabbedForm = connect(null,{
 	
 }) (LoginRegisterTabbedForm_)
 
 class Login extends Component {
 
-    // login = (auth) => {
-	// 	console.log('auth:', auth)
-	// 	console.log('login props:',this.props)
-	// 	this.props.userLogin(auth, this.props.location.state ? this.props.location.state.nextPathname : '/');
-	// }
-
     render() {
-		console.log(this.props)
-		const { theme } = this.props;
-        const muiTheme = getMuiTheme(theme);
-		const { primary1Color, accent1Color } = getColorsFromTheme(muiTheme);
-
+		const { classes } = this.props
         return (
-            <MuiThemeProvider muiTheme={muiTheme}>
-			<div style={{ ...styles.main, backgroundColor: primary1Color }}>
-				<Card style={styles.card}>
-					<div style={styles.avatar}>
-						<Avatar backgroundColor={accent1Color} icon={<LockIcon />} size={60} />
+			<div
+				className={classes.main}
+				// {...sanitizeRestProps(rest)}
+			>
+				<Card className={classes.card}>
+					<div className={classes.avatar}>
+						<Avatar className={classes.icon}>
+							<LockIcon />
+						</Avatar>
 					</div>
-					
-					 <LoginRegisterTabbedForm { ...this.props }/> 
+					<LoginRegisterTabbedForm { ...this.props } translate={this.props.translate}/> 
 				</Card>
 				<Notification />
 			</div>
-			</MuiThemeProvider>
         );
     }
 }
 
+Login.contextTypes = {
+    translate: PropTypes.func,
+};
+
 Login.propTypes = {
-	...propTypes,
-    authClient: PropTypes.func,
-    previousRoute: PropTypes.string,
-    theme: PropTypes.object.isRequired,
-    translate: PropTypes.func.isRequired,
+	// ...propTypes,
+    // authClient: PropTypes.func,
+    // previousRoute: PropTypes.string,
+    // theme: PropTypes.object.isRequired,
+    // translate: PropTypes.func.isRequired,
 	userLogin: PropTypes.func.isRequired,
-	resetPassword: PropTypes.func
+	resetPassword: PropTypes.func,
+	className: PropTypes.string,
+    authProvider: PropTypes.func,
+    classes: PropTypes.object,
+    input: PropTypes.object,
+    meta: PropTypes.object,
+    previousRoute: PropTypes.string
 };
 
 Login.defaultProps = {
@@ -242,4 +254,4 @@ const enhance = compose(
 				  })
 );
 
-export default enhance(Login);
+export default withStyles(styles)(enhance(Login));

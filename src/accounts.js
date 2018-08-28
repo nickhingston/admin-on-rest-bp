@@ -1,26 +1,29 @@
 // in src/accounts.js
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { CardActions } from 'material-ui/Card';
-import MuiTextField from 'material-ui/TextField'
-import MuiFlatButton from 'material-ui/FlatButton';
-import get from 'lodash.get';
-import { accountAddUser } from './accountUserSaga';
-import { subscriptionUpdate, subscriptionDelete } from './subscriptionActions';
+import CardActions from '@material-ui/core/CardActions';
+import MuiTextField from '@material-ui/core/TextField'
+import MuiFlatButton from '@material-ui/core/Button';
+// import get from 'lodash.get';
+import { accountAddUser } from './sagas/accountUserSaga';
+import { subscriptionUpdate, subscriptionDelete, subscriptionGetPlans } from './sagas/subscriptionSaga';
+import { startUndoable as startUndoableAction } from 'ra-core';
 
-import { Toolbar as MuiToolbar, ToolbarGroup } from 'material-ui/Toolbar';
+import MuiToolbar from '@material-ui/core/Toolbar';
 
 import BraintreeDropIn from "./BraintreeDropIn.js";
 import PaymentMethodField from "./PaymentMethodField.js";
+import CostField from "./CostField.js";
 import PlainTextField from "./PlainTextField.js";
 
-import FlatButton from 'material-ui/FlatButton';
-import NavigationRefresh from 'material-ui/svg-icons/navigation/refresh';
+import FlatButton from '@material-ui/core/Button';
+import NavigationRefresh from '@material-ui/icons/Refresh';
 // import { push } from 'react-router-redux';
 // import { connect } from 'react-redux';
-import RecordButton from './recordButton'
 
-import { EmbeddedArrayField } from 'aor-embedded-array'
+// import { EmbeddedArrayField } from 'aor-embedded-array'
+import AccountUserIterator from './AccountUserIterator';
+
 import SimpleFormWithButtons from './mui/form/SimpleFormWithButtons'
 import { 
 	List, 
@@ -39,15 +42,19 @@ import {
 	ListButton,
 	DeleteButton,
 	SelectInput,
-	AutocompleteInput
+	AutocompleteInput,
+	ArrayInput,
+	showNotification
 	 
-} from 'admin-on-rest';
-import { SaveButton } from '../node_modules/admin-on-rest/lib/mui/button';
+} from 'react-admin';
+import { SaveButton } from 'ra-ui-materialui/lib/button';
 
 import countries from './countries.json';
 
-export const AccountTitle = ({ record }) => {
-    return <span>Account name: {record ? `"${record.name || "New"}"` : ''}</span>;
+import { refreshView as refreshViewAction } from 'ra-core';
+
+export const AccountTitle = () => {
+    return <span>Account</span>;
 };
 
 export const AccountList = (props) => {
@@ -96,34 +103,31 @@ const AccountEditActions = ({ basePath, data, refresh, history }) => (
     <CardActions >
         <ShowButton basePath={basePath} record={data} />
         <ListButton basePath={basePath} />
-        <DeleteButton basePath={basePath} record={data} />
-        <FlatButton primary label="Refresh" onClick={refresh} icon={<NavigationRefresh />} />
+        <DeleteButton basePath={basePath} record={data} resource="accounts" />
+        <FlatButton color="primary" label="Refresh" onClick={refresh} icon={<NavigationRefresh />}>Refresh</FlatButton>
         {/* Add your custom actions */}
         {/* <FlatButton primary label="Add plate" onClick={customAction} /> */}
 		{/* <CreatePlateItemButton plateId={data && data.id}/> */}
     </CardActions>
 );
 
-const passParentRecord = (WrappedComponent) => {
-	
-	return class extends React.Component {
-		render() {
-		  // Notice that we pass through any additional props
-		  return <WrappedComponent {...this.props} parentRecord={this.props.record} meta={{touched:false, error:null}}/>;
-		}
-	  };
-}
 
-const EmbeddedArrayFieldWithParent = passParentRecord(EmbeddedArrayField);
+const AccountToolbar = props => {
+	return (
+	<MuiToolbar>
+		{/* <ToolbarGroup> */}
+			<SaveButton handleSubmitWithRedirect={props.handleSubmitWithRedirect} redirect="edit" />
+		{/* </ToolbarGroup> */}
+	</MuiToolbar>);
+};
 
 const setBasePath = (WrappedComponent, path) => {
 	
 	return class extends React.Component {
 		render() {
-			const {source, record } = this.props;
-			const item = get(record, source)
+			const { record } = this.props;
 		  // Notice that we pass through any additional props
-		  return <WrappedComponent {...this.props} basePath={path} record={item}/>;
+		  return <WrappedComponent {...this.props} basePath={path} record={record}/>;
 		}
 	  };
 }
@@ -131,34 +135,28 @@ const setBasePath = (WrappedComponent, path) => {
 const EditUserButton = setBasePath(EditButton, "/users");
 
 
-const AccountToolbar = props => {
-	return (
-	<MuiToolbar>
-		<ToolbarGroup>
-			<SaveButton handleSubmitWithRedirect={props.handleSubmitWithRedirect} redirect="edit" />
-			<MuiFlatButton primary label="Update payment!" onClick={() => props.subscriptionUpdate(props.account, 'fake-valid-nonce')}  />
-		</ToolbarGroup>
-	</MuiToolbar>);
-};
 
+const sanitizeEditProps = ({
+	registrationObj,
+	accountAddUser,
+	subscriptionGetPlans,
+	subscriptionUpdate,
+	subscriptionDelete,
+	refreshViewAction,
+	showNotification,
+	subscriptionPlanObj,
+	...rest
+}) => rest
 class AccountEditClass extends Component {
 	constructor(props) {
 		super(props);
-		this.removeUser = this.removeUser.bind(this);
-	}
-	removeUser(record) {
-		console.log(record)
-		console.log(this.accountRecord)
-		let i = this.accountRecord.users.indexOf(record)
-		if (i > 0) {
-			let users = [...this.accountRecord.users];
-			users.splice(i, 1);
-			this.accountRecord.users = users;
-		}
-		this.setState({})
+		this.state = { 
+			showUpdatePayment: false
+		};
+		props.subscriptionGetPlans();
 	}
 	render() {
-		let emailField = null;
+		const showUpdatePayment = this.state.showUpdatePayment;
 		const {props} = this;
 		const addUserEmail = (email) => {
 			// TODO: check actually an email!
@@ -166,83 +164,103 @@ class AccountEditClass extends Component {
 		}
 		const account = props.admin.resources.accounts.data[decodeURIComponent(props.match.params.id)];
 		const { subscription } = account || {};
-		const numberOfUsers = ((subscription && subscription.addOns && subscription.addOns.length && subscription.addOns[0].quantity) || 0) + 1
+		const numberOfUsers = ((subscription && subscription.addOns && subscription.addOns.length && subscription.addOns[0].quantity) || 0) + 1;
+		const usersChanged = (account && !showUpdatePayment && numberOfUsers !== account.users.length);
 		return (
 
-			<Edit title={<AccountTitle />} actions={<AccountEditActions />}  {...props}>
+			[<Edit key="account" title={<AccountTitle />} actions={<AccountEditActions />}  {...sanitizeEditProps(props)}>
 				<SimpleFormWithButtons autoComplete="nope" toolbar={<AccountToolbar redirect={null} account={account} subscriptionUpdate={props.subscriptionUpdate}/> } >
 					<DisabledInput source="id" />	
-					<TextInput label="Company Name" source="name" ref={ ref => { ref && ref.getInputNode().setAttribute("autocomplete","nope")} } />
-					<TextInput label="Contact Email" source="contactEmail" ref={ ref => { ref && ref.getInputNode().setAttribute("autocomplete","nope")} } />
-					<TextInput label="Contact First Name" source="contactFirstName" ref={ ref => { ref && ref.getInputNode().setAttribute("autocomplete","nope")} } />
-					<TextInput label="Contact Last Name" source="contactLastName" ref={ ref => { ref && ref.getInputNode().setAttribute("autocomplete","nope")} } />
+					<TextInput label="Company Name" source="name" />
+					<TextInput label="Contact Email" source="contactEmail" />
+					<TextInput label="Contact First Name" source="contactFirstName" />
+					<TextInput label="Contact Last Name" source="contactLastName" />
 					
-					<TextInput label="Flat/Appt no" source="contactAddress.extendedAddress" autoComplete="nope" ref={ ref => { 
-						ref && 
-						ref.getInputNode().setAttribute("autocomplete","nope");
-						console.log("BAAAH:", ref)} 
-					} />
-					<TextInput label="Street Address" source="contactAddress.streetAddress" autoComplete="nope" ref={ ref => { ref && ref.getInputNode().setAttribute("autocomplete","nope")} } />
-					<TextInput label="City" source="contactAddress.locality" ref={ ref => { ref && ref.getInputNode().setAttribute("autocomplete","nope")} } />
-					<TextInput label="State/County" source="contactAddress.region" ref={ ref => { ref && ref.getInputNode().setAttribute("autocomplete","nope")} } />
-					<TextInput label="Post Code" source="contactAddress.postalCode" ref={ ref => { ref && ref.getInputNode().setAttribute("autocomplete","nope")} } />
-					<AutocompleteInput label="Country" source="contactAddress.countryName" choices={countries} allowEmpty={false} />
+					<TextInput label="Flat/Appt no" source="contactAddress.extendedAddress" autoComplete="nope" />
+					<TextInput label="Street Address" source="contactAddress.streetAddress" autoComplete="nope" />
+					<TextInput label="City" source="contactAddress.locality" />
+					<TextInput label="State/County" source="contactAddress.region" />
+					<TextInput label="Post Code" source="contactAddress.postalCode" />
+					<AutocompleteInput label="Country" source="contactAddress.countryName" choices={countries} allowEmpty={false} autoComplete="nope"/>
 					
-					{<h3>Users:</h3>}
-					<EmbeddedArrayFieldWithParent elStyle={{ display: "flex", flexDirection: "row"}} source="users" ref={(ref) => this.accountRecord = (ref && ref.props.record)}>	
-							<TextField label="Email" source="email" style={{display: "inline-block", margin:"10px"}}/>
-							{/* this seems broken?! <SelectInput label="Account Role" source="accountRole" choices={[
-                                { id: 'admin', name: 'Admin' },
-                                { id: 'user', name: 'User' }
-                            ]} /> */}
-							<EditUserButton source="" label="Edit User" style={{display: "inline-block", margin:"10px"}} />
-							<RecordButton primary source="" onClick={this.removeUser} label="Remove" style={{display: "inline-block", margin:"10px"}}/>
-					</EmbeddedArrayFieldWithParent>
-					<MuiTextField key="email-field" type="email" ref={ ref => { ref && (emailField = ref) && ref.getInputNode().setAttribute("autocomplete","nope")} } hintText="Enter new user email" style={{display: "inline-block"}}/>
-					<MuiFlatButton primary key="add-user-button" label="Add user" onClick={() => addUserEmail(emailField.getInputNode().value)} style={{display: "inline-block", margin:"10px"}} />
-					{
+					{<h3 key="users-title">Users:</h3>}
+					
+					<ArrayInput source="users">
+						<AccountUserIterator disableAdd>
+							<TextInput disabled label=" " source="email" style={{display: "inline-block", width: "250px"}} fullWidth />
+							<SelectInput label="Account Role" source="accountRole" choices={[
+										{ id: 'admin', name: 'Admin' },
+										{ id: 'user', name: 'User' }
+							]} style={{display: "inline-block", minWidth: "100px", width: "100px", marginLeft: "20px"}}/>
+							<EditUserButton source="id" label="Edit User" style={{display: "inline-block", minWidth: "100px", width: "120px", marginLeft: "20px", marginTop: "20px"}} />
+						</AccountUserIterator>
+					</ArrayInput>
+
+					<MuiTextField id="add-email-field" key="email-field" type="email" label="Enter new user email" style={{display: "inline-block", minWidth: "250px" }} fullWidth/>
+					<MuiFlatButton color="primary" key="add-user-button" onClick={() => addUserEmail(document.getElementById("add-email-field").value)} style={{display: "inline-block", margin:"10px"}}>Add User</MuiFlatButton>
+					
+				</SimpleFormWithButtons>
+				
+			</Edit>,
+			<Edit key="subscription" title="Subscription" actions={null}  {...sanitizeEditProps(props)} style={{paddingTop: "50px" }}>
+				<SimpleFormWithButtons autoComplete="nope" account={account} toolbar={null} >
+				{
 						(subscription && (subscription.status === "Active" || subscription.status === "Pending") && [
-							<h3 key="subscription" >Subscription:</h3>,
 							<TextField key="subscription.status" label="Status" source="subscription.status"  style={{display: "inline-block"}}  />,
-							<MuiFlatButton key="cancel-btn" secondary label="CANCEL" onClick={() => props.subscriptionDelete(account) } style={{display: "inline-block", margin:"10px"}} />,
+							<MuiFlatButton key="cancel-btn" onClick={() => startUndoableAction(props.subscriptionDelete(account)) } style={{color: "#f44336", display: "inline-block", margin:"10px", marginTop:"20px"}} >CANCEL</MuiFlatButton>,
 							<PlainTextField key="no-of-users" label="Number of users" text={numberOfUsers.toString()} />,
 							<TextField key="subscription.nextBillingDate" label="Next Payment Date" source="subscription.nextBillingDate" />,
 							<TextField key="subscription.nextBillingPeriodAmount" label="Next Payment Amount" source="subscription.nextBillingPeriodAmount" />,
-							<PaymentMethodField key="last-payment-method" label="Last Payment Method" subscription={subscription} />,
-							<BraintreeDropIn key="braintree-dropin-update" currency="GBP" success={(a) => {
-								console.log("complete:", a);
-							}} />
+							<PaymentMethodField key="last-payment-method" label="Last Payment Method" subscription={subscription}  style={{display: "inline-block", width:"256px"}} />,
+							<MuiFlatButton key="updatePayment" color="primary" onClick={() => this.setState({showUpdatePayment: !showUpdatePayment}) } style={{display: "inline-block", margin:"10px", marginTop:"20px"}} >{showUpdatePayment ? "Hide" : "Change"}</MuiFlatButton>,
+							(showUpdatePayment && <BraintreeDropIn submitButtonText="Update Payment Method" key="braintree-dropin-update" currency="GBP" success={(a) => {
+								this.props.showNotification('Update payment successful');
+								setTimeout(() => {
+									this.props.refreshViewAction();	
+								},1000);
+							}} failure={(err) => {
+								console.warn(err);
+								this.props.showNotification('Update payment failed.', 'warning');
+							}} />) || null,
+							(usersChanged && <CostField key="cost-field" label="Updated Cost" source="frequency" plans={props.plan} />) || null,
+							(usersChanged &&<MuiFlatButton key="subscription-update" variant="contained" color="primary" onClick={() => props.subscriptionUpdate(account)}>Update</MuiFlatButton>) || null
 						]) || [
-							<h3  key="subscribe">Subscribe:</h3>,
-							(subscription ? <TextField key="subscription.nextBillingDate" label="Subscription End Date" source="subscription.nextBillingDate" /> : null),
-							<SelectInput key="select-frequency" label="Billing Frequency" source="frequency" choices={[
+							<SelectInput id="frequency-input" key="select-frequency" label="Billing Frequency" source="frequency" choices={[
                                 { id: 'monthly', name: 'Monthly' },
                                 { id: 'yearly', name: 'Yearly' }
-                            ]} />,
-							<BraintreeDropIn key="braintree-dropin-pay" currency="GBP" success={(a) => {
-								console.log("complete:", a);
+							]} />,
+							<CostField key="cost-field" label="Cost" source="frequency" plans={props.plan} />,
+							<BraintreeDropIn submitButtonText="SUBSCRIBE" key="braintree-dropin-pay" currency="GBP" success={(a) => {
+								this.props.showNotification('mothership_admin.subscription.succeeded');
+								setTimeout(() => {
+									this.props.refreshViewAction();	
+								},10);
+							}}	failure={(err) => {
+								console.warn(err);
+								this.props.showNotification('mothership_admin.subscription.failed', 'warning');
 							}} />
 						]
 					}
-					{/* <MuiTextInput source="new_email" style={{display: "inline-block", margin:"10px"}} autoComplete="nope" ref={(ref) => this.newEmailRef = (ref)}/>
-					<AddEmailButton primary label="Add User" style={{display: "inline-block", margin:"10px"}} onClick={onClick}/> */}
-				</SimpleFormWithButtons>
-				
-			</Edit>
+				</SimpleFormWithButtons>	
+			</Edit>]
 		
 			)
 	}
 }
 
 const mapStateToProps = state => {
-	return state;
+	return ({ ...state, plan: state.subscriptionPlanObj })
 }
 
 export const AccountEdit = connect(mapStateToProps, 
 	{
+		showNotification,
 		accountAddUser,
+		subscriptionGetPlans,
 		subscriptionUpdate,
-		subscriptionDelete
+		subscriptionDelete,
+		refreshViewAction,
+
 	}
 )(AccountEditClass);
 
@@ -255,16 +273,5 @@ export const AccountCreate = (props) => {
 				<TextInput source="name" />
 			</SimpleForm>
 		</Create>
-	);
-};
-
-
-export const AccountUsersList = (props) => {
-	return (
-		
-		<Datagrid>
-			<TextField source="name" />
-			<EditButton />
-		</Datagrid>
 	);
 };

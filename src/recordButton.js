@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import get from 'lodash.get';
 import pure from 'recompose/pure';
 
 class RecordButton extends Component {
 	render() {
-		const {elStyle, record, source, label, onClick} = this.props;
-		const item = get(record, source);
-		return <a style={elStyle} onClick={(e) => { onClick(item); e.stopPropagation(); e.preventDefault()}}>{label}</a>;
+		const {elStyle, record, records, label, onClick} = this.props;
+		return <a style={elStyle} onClick={(e) => { onClick(record, records); e.stopPropagation(); e.preventDefault()}}>{label}</a>;
 	}
 }
 

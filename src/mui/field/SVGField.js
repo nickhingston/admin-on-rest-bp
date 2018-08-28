@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import get from 'lodash.get';
-import pure from 'recompose/pure';
 
 const SVGField = ({ source, record = {}, elStyle }) => {
-    return <div dangerouslySetInnerHTML={{__html:get(record, source)}} />;
+    return <div style={elStyle} dangerouslySetInnerHTML={{__html:get(record, source)}} />;
 }
 
 SVGField.propTypes = {
@@ -15,10 +14,4 @@ SVGField.propTypes = {
     source: PropTypes.string.isRequired,
 };
 
-const PureSVGField = pure(SVGField);
-
-PureSVGField.defaultProps = {
-    addLabel: true,
-};
-
-export default PureSVGField;
+export default SVGField;

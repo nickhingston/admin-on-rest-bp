@@ -3,7 +3,7 @@ import React from "react";
 import braintree from "braintree-web-drop-in";
 import BraintreeDropin from "braintree-dropin-react";
 
-import MuiFlatButton from 'material-ui/FlatButton';
+import MuiFlatButton from '@material-ui/core/Button';
 
 const apiUrl = process.env.REACT_APP_SERVICE_API;
 // renderSubmitButton.propTypes = {
@@ -24,7 +24,9 @@ class BraintreeDropInComponent extends React.Component {
   }
 
   componentWillMount() {
-    this.getToken();
+    if (!this.state.token) {
+      this.getToken();
+    }
   }
 
   onCreate = instance => {
@@ -32,7 +34,7 @@ class BraintreeDropInComponent extends React.Component {
   }
 
   onDestroyStart = () => {
-    this.setState({ dropinInstance: null });
+    // this.setState({ dropinInstance: null });
   }
 
   onDestroyEnd = () => {
@@ -63,13 +65,11 @@ class BraintreeDropInComponent extends React.Component {
     const headers = { "Content-Type": "application/json" };
 
     const options = {
-      method: "POST",
+      method: "PUT",
       headers,
-      body: JSON.stringify({
-        payment_method_nonce: payload.nonce
-      })
+      body: JSON.stringify({})
     };
-    fetch(apiUrl + "/subscription?access_token=" + localStorage.token, options)
+    fetch(`${apiUrl}/subscription?access_token=${encodeURIComponent(localStorage.token)}&payment_method_nonce=${encodeURIComponent(payload.nonce)}&frequency=${this.props.record.frequency}`, options)
       .then(response => {
         if (response.ok) {
           this.setState({ dropinInstance: null });
@@ -80,14 +80,16 @@ class BraintreeDropInComponent extends React.Component {
           response.json()
             .then(json => {
               console.log(json);
-              // const errorMessage = json.error || "Payment failed: unknown";
+              const errorMessage = json.error || "Payment failed: unknown";
               //this.props.uiActions.presentDialog(infoDialog("Error", errorMessage));
               console.log(response);
+              this.props.failure(Error(errorMessage));
             })
             .catch(() => {
-              // const errorMessage = "Payment failed: network error?";
+              const errorMessage = "Payment failed: network error?";
               // this.props.uiActions.presentDialog(infoDialog("Error", errorMessage));
               console.log(response);
+              this.props.failure(Error(errorMessage));
             });
         }
       });
@@ -96,7 +98,7 @@ class BraintreeDropInComponent extends React.Component {
   renderSubmitButton = ({ onClick, isDisabled, text }) => {
     if (this.state.dropinInstance) {
       return (
-        <MuiFlatButton primary key="add-user-button" label="Set Payment Method" onClick={onClick} />
+        <MuiFlatButton color="primary" variant="contained" disabled={isDisabled} key="add-user-button" label="Set Payment Method" onClick={onClick}>{this.props.submitButtonText}</MuiFlatButton>
         // <button
         //   onClick={onClick}
         //   disabled={isDisabled}

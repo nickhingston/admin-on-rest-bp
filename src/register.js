@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { Card } from 'material-ui/Card'
-import { ViewTitle, Notification, Restricted, translate, Toolbar } from 'admin-on-rest'
+import Card from '@material-ui/core/Card'
+import { ViewTitle, Notification, Authenticated, translate, Toolbar } from 'react-admin'
 import { withRouter } from 'react-router-dom'
 import { UserCreate } from './users'
 import SubmitButton from './mui/buttons/SubmitButton'
@@ -9,7 +9,7 @@ import { connect } from 'react-redux'
 import { 
 	registerGet as registerGetAction,
 	registerUser as registerUserAction,
-} from './registerSaga'
+} from './sagas/registerSaga'
 
 
 import PropTypes from 'prop-types';
@@ -82,9 +82,9 @@ const RegisterRoute = (params)  => {
 	const { location, translate } = params
 
 	return (
-		<Restricted authParams={{ resource: 'register', route:params.match.params.id }} location={location} >
+		<Authenticated authParams={{ resource: 'register', route:params.match.params.id }} location={location} >
 			<Register title={params.match.params.id} location={location} regToken={params.match.params.id} translate={translate} />
-		</Restricted>	
+		</Authenticated>	
 	)
 }
 

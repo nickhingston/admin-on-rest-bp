@@ -22,7 +22,7 @@ import {
 	SimpleList,
 	ShowButton
 	// ,AutocompleteInput
-} from 'admin-on-rest';
+} from 'react-admin';
 
 
 export const CaseList = (props) => (

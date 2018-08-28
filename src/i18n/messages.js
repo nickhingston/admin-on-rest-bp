@@ -82,6 +82,12 @@ export default {
             expired: 'Registration expired, please re-request sign up',
             create_user: 'Create user'
         },
+        subscription: {
+            succeeded: 'Subscription success',
+            delete_succeeded: 'Subscription cancelled',
+            failed: 'Subscription failure',
+            delete_failed: 'Subscription cancel failure'
+        },
         password: {
             request_sent:   'Password request sent, please check your inbox',
             request_failed: 'Password request failed, please try again later'

@@ -2,9 +2,9 @@
 import React from 'react';
 import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
-import { CardActions } from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
-import NavigationRefresh from 'material-ui/svg-icons/navigation/refresh';
+import CardActions from '@material-ui/core/CardActions';
+import FlatButton from '@material-ui/core/Button';
+import { withStyles } from '@material-ui/core/styles';
 import { 
     Create,
 	Edit,
@@ -22,7 +22,7 @@ import {
     EditButton,
     DateInput,
     SelectInput
-} from 'admin-on-rest';
+} from 'react-admin';
 
 import BraintreeDropIn from "./BraintreeDropIn.js";
 
@@ -38,11 +38,15 @@ const validateUserSave = (values) => {
     return errors
 };
 
-const SmallImageField = function (ref) {
-	var imageField = ImageField(ref);
-	imageField.props.children.props.style.maxHeight = '2rem';
-	return imageField;
+const sifStyle = {
+    image : {
+        maxHeight: '2rem'
+    }
 }
+
+const SmallImageField = withStyles(sifStyle)(({ classes, ...props }) => (
+	<ImageField classes={classes} {...props} />
+));
 
 
 export const UserList = (props) => (
@@ -50,14 +54,12 @@ export const UserList = (props) => (
 		<Responsive
             small={
                 <SimpleList
-                    primaryText={record => `${record}`}// record.email}
-                    //secondaryText={record => `${record.views} views`}
-                    //tertiaryText={record => new Date(record.published_at).toLocaleDateString()}
+                    primaryText={record => record.email}
                 />
             }
             medium={
                 <Datagrid>
-					<SmallImageField source="picture" elStyle={{ image: {backgroundColor: "black", height: "2rem" }}} />
+					<SmallImageField source="picture" style={{ image: {backgroundColor: "black", height: "2rem" }}} />
                     <TextField source="id" />
                     <EmailField source="email" />
 					<TextField source="role" />
@@ -75,17 +77,17 @@ const UserEmail = ({ record }) => {
 };
 
 const CreateAccountButton = connect(null, {push: push })((props) => (
-	<FlatButton primary label="Create Account" onClick={() => {
+	<FlatButton onClick={() => {
 		props.push("/accounts/create", {user: props.userId});
 	}
-	}/>
+	}>Create Account</FlatButton>
 ));
 
 const ViewAccountButton = connect(null, {push: push })((props) => (
-	<FlatButton primary label="Show Account" onClick={() => {
+	<FlatButton onClick={() => {
 		props.push("/accounts/" + props.accountId, {user: props.userId});
 	}
-	}/>
+	}>Show Account</FlatButton>
 ));
 
 const UserEditActions = ({ basePath, data, refresh, history }) => {
@@ -95,7 +97,7 @@ const UserEditActions = ({ basePath, data, refresh, history }) => {
             {/* <ShowButton basePath={basePath} record={data} />
             <ListButton basePath={basePath} />
             <DeleteButton basePath={basePath} record={data} /> */}
-            <FlatButton primary label="Refresh" onClick={refresh} icon={<NavigationRefresh />} />
+            {/* <FlatButton primary label="Refresh" onClick={refresh} icon={<NavigationRefresh />} /> */}
             {/* Add your custom actions */}
             {/* <FlatButton primary label="Add plate" onClick={customAction} /> */}
             { !account && <CreateAccountButton userId={data && data.id}/> }
@@ -121,7 +123,8 @@ export const UserEdit = (props) => {
                                 { id: 'user', name: 'User' }
                             ]} />}
             {isAdminUser  && <DateInput source="trialEnd" /> }
-            {isAdminUser  && <TextInput source="subscription" /> }
+            {isAdminUser  && <TextInput source="subscription.id" disabled/> }
+            {isAdminUser  && <TextInput source="subscription.status" disabled/> }
             {account && <SelectInput label="Account Role" source="accountRole" choices={[
                                 { id: 'admin', name: 'Admin' },
                                 { id: 'user', name: 'User' }
