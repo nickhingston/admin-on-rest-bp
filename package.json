@@ -3,16 +3,21 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "aor-embedded-array": "0.0.8",
     "react-scripts": "0.9.5",
+    "redux-form": "^7.4.2",
     "redux-logger": "^3.0.6"
   },
   "devDependencies": {
     "braintree-dropin-react": "^0.1.0",
     "braintree-web-drop-in": "^1.11.0",
+    "lodash.get": "^4.4.2",
     "react": "~16.3.2",
     "react-admin": "^2.2.2",
-    "react-dom": "~16.3.3"
+    "react-dom": "~16.3.3",
+    "react-router-dom": "^4.3.1",
+    "react-transition-group": "^2.4.0",
+    "recompose": "^0.29.0",
+    "redux-saga": "^0.16.0"
   },
   "scripts": {
     "start": "node -r dotenv/config ./node_modules/.bin/react-scripts start dotenv_config_path=.env",
