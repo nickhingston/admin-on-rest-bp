@@ -26,6 +26,7 @@ import {
 } from 'ra-ui-materialui';
 
 import Register from './register'
+import { PasswordEdit } from './password'
 
 const CoreAdmin = ({
     appLayout,
@@ -44,7 +45,8 @@ const CoreAdmin = ({
     title = 'React Admin',
     loading,
 	loginPage,
-	registerPage,
+    registerPage,
+    passwordResetPage,
     logoutButton,
     initialState,
     locale = 'en',
@@ -106,6 +108,15 @@ const CoreAdmin = ({
                             }
                         />
                         <Route
+                            path="/password-resets/:id"
+                            render={props =>
+                                createElement(passwordResetPage, {
+                                    ...props,
+                                    title,
+                                })
+                            }
+                        />
+                        <Route
                             path="/"
                             render={props => (
                                 <CoreAdminRouter
@@ -153,7 +164,8 @@ CoreAdmin.propTypes = {
     loading: componentPropType,
     locale: PropTypes.string,
 	loginPage: componentPropType,
-	registerPage: componentPropType,
+    registerPage: componentPropType,
+    passwordResetPage: componentPropType,
     logoutButton: componentPropType,
     menu: componentPropType,
     theme: PropTypes.object,
@@ -174,7 +186,8 @@ Admin.defaultProps = {
     catchAll: NotFound,
     loading: Loading,
 	loginPage: Login,
-	registerPage: Register,
+    registerPage: Register,
+    passwordResetPage: PasswordEdit,
     logoutButton: Logout,
 };
 

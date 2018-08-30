@@ -24,7 +24,6 @@ import { CaseList, CaseEdit, CaseCreate } from './cases';
 import { PlatesList, PlatesEdit, PlatesCreate } from './plates';
 import { PlateItemList, PlateItemShow, PlateItemEdit, PlateItemCreate } from './plate-item';
 import { AccountList, AccountShow, AccountEdit, AccountCreate } from './accounts';
-import { PasswordEdit } from './password'
 
 import customRoutes from './customRoutes'
 
@@ -34,7 +33,7 @@ import PlatesIcon from '@material-ui/icons/Group'
 import CaseIcon from '@material-ui/icons/Group'
 import registerSaga, { registerGetReducer as registrationObj} from './sagas/registerSaga'
 import subscriptionSaga, {subscriptionPlanReducer as subscriptionPlanObj } from './sagas/subscriptionSaga'
-import { passwordSaga } from './password'
+import { passwordSaga, passwordResetGetReducer as passwordResetObj} from './password'
 import enMessages from 'ra-language-english';
 
 import createHistory from 'history/createBrowserHistory';
@@ -67,19 +66,18 @@ const App = () => {
             local={resolveBrowserLocale()} 
             i18nProvider={i18nProvider}
             customSagas={[ registerSaga, passwordSaga, subscriptionSaga ]}
-            customReducers={{ registrationObj, subscriptionPlanObj }} >
+            customReducers={{ registrationObj, subscriptionPlanObj, passwordResetObj }} >
 
 
         <Resource name="posts" list={PostList} edit={PostEdit} create={PostCreate} icon={PostIcon} />
         <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate} icon={UserIcon} />
         <Resource name="cases" list={CaseList} edit={CaseEdit} create={CaseCreate} icon={CaseIcon} />
-        <Resource name="password-resets" edit={PasswordEdit} icon={UserIcon} /> 
+        {/* <Resource name="password-resets" edit={PasswordEdit} icon={UserIcon} />  */}
 
         <Resource name="plates" list={PlatesList} edit={PlatesEdit} create={PlatesCreate} icon={PlatesIcon} />
 
         <Resource name="plate-items" list={PlateItemList} show={PlateItemShow} edit={PlateItemEdit} create={PlateItemCreate} />
         <Resource name="accounts" list={AccountList} show={AccountShow} edit={AccountEdit} create={AccountCreate} />
-        <Resource name="xrays" />
         <Resource name="xrays" />
     </Admin>
 )};

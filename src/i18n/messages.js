@@ -90,7 +90,10 @@ export default {
         },
         password: {
             request_sent:   'Password request sent, please check your inbox',
-            request_failed: 'Password request failed, please try again later'
+            request_failed: 'Password request failed, please try again later',
+            get_request_failed_404: 'Could not find password reset, request has expired or token already used',
+            update_succeeded: 'Your password has changed, please login',
+            passwords_must_match: 'Passwords must match'
         }
     },
 };
