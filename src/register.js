@@ -1,10 +1,17 @@
 import React, { Component } from 'react'
-import Card from '@material-ui/core/Card'
-import { ViewTitle, Notification, Authenticated, translate, Toolbar } from 'react-admin'
+import { ViewTitle,
+	showNotification,
+	Notification,
+	Authenticated,
+	translate,
+	Toolbar } from 'react-admin'
+
 import { withRouter } from 'react-router-dom'
 import { UserCreate } from './users'
 import SubmitButton from './mui/buttons/SubmitButton'
 import { connect } from 'react-redux'
+import { withStyles } from '@material-ui/core/styles';
+import { Card, CardHeader  } from '@material-ui/core';
 
 import { 
 	registerGet as registerGetAction,
@@ -14,7 +21,36 @@ import {
 
 import PropTypes from 'prop-types';
 
-
+const styles = theme => ({
+    main: {
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        height: '1px',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        background: 'linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(https://vpop-pro.com/images/IMG_6726.jpg)',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+	},
+	textField: {
+		// marginLeft: theme.spacing.unit,
+		// marginRight: theme.spacing.unit,
+		// width: 300,
+	},
+    card: {
+        minWidth: 450,
+        marginTop: '6em',
+    },
+    cardHeader: {
+        margin: '1em',
+        display: 'flex',
+        justifyContent: 'center',
+    },
+    icon: {
+        backgroundColor: theme.palette.secondary[500],
+    },
+});
 
 class RegisterClass extends Component {
 	constructor(props) {
@@ -30,11 +66,16 @@ class RegisterClass extends Component {
 		const { repeat_password, ...rest } = formDetails
 		const { regToken, reg } = this.props
 
-		this.props.registerUser({...rest, email:reg.email }, regToken)
+		if (repeat_password === rest.password) {
+			this.props.registerUser({...rest, email:reg.email }, regToken)
+		}
+		else {
+			this.props.showNotification('mothership_admin.password.passwords_must_match', 'warning')
+		}
 	}
 
 	render() {
-		const { translate, reg } = this.props;
+		const { translate, reg, classes } = this.props;
 		const toolbar = (<Toolbar>
 								<SubmitButton 
 									label='mothership_admin.register.create_user'
@@ -43,9 +84,12 @@ class RegisterClass extends Component {
                         		/> 	
 							</Toolbar>)
 		return (
-			<div >
-				<Card >
-					{ reg && reg.email && <ViewTitle title={reg.email} /> }
+			<div className={classes.main}>
+				<Card className={classes.card}>
+					{/* <div className={classes.cardHeader}> */}
+						<CardHeader title="Register" subheader={reg && reg.email} />
+					{/* </div> */}
+
 					{ reg && reg.email && UserCreate({...reg, save:this.submit, values:reg, toolbar})}
 					{ reg===null && <ViewTitle title={translate('mothership_admin.register.expired')} />}
 				</Card>
@@ -69,12 +113,13 @@ const mapStateToProps = state => {
 	return ({ reg: state.registrationObj })
 }
 
-const Register = connect(mapStateToProps, 
+const Register = withStyles(styles)(connect(mapStateToProps, 
 	{
 		registerGet:registerGetAction,
 		registerUser:registerUserAction,
+		showNotification
 	}
-)(RegisterClass)
+)(RegisterClass))
 
 
 const RegisterRoute = (params)  => {

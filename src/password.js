@@ -147,9 +147,9 @@ class PasswordEditClass extends Component {
 				// {...sanitizeRestProps(rest)}
 			>
 				<Card className={classes.card}>
-					<div className={classes.cardHeader}>
+					{/* <div className={classes.cardHeader}> */}
 						<CardHeader title="Password Reset" subheader={user && user.email} />
-					</div>
+					{/* </div> */}
 					
 		
 					<SimpleForm redirect="/" record={passwordResetObj} save={this.submit} >
