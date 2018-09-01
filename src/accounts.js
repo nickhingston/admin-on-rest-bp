@@ -42,7 +42,7 @@ import {
 	ListButton,
 	DeleteButton,
 	SelectInput,
-	AutocompleteInput,
+	// AutocompleteInput,
 	ArrayInput,
 	showNotification
 	 
@@ -182,7 +182,7 @@ class AccountEditClass extends Component {
 					<TextInput label="City" source="contactAddress.locality" />
 					<TextInput label="State/County" source="contactAddress.region" />
 					<TextInput label="Post Code" source="contactAddress.postalCode" />
-					<AutocompleteInput label="Country" source="contactAddress.countryName" choices={countries} allowEmpty={false} autoComplete="nope"/>
+					<SelectInput label="Country" source="contactAddress.countryName" choices={countries} allowEmpty={false} autoComplete="nope" resettable/>
 					
 					{<h3 key="users-title">Users:</h3>}
 					
