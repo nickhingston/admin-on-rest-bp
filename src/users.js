@@ -3,7 +3,7 @@ import React from 'react';
 import { push } from 'react-router-redux';
 import { connect } from 'react-redux';
 import CardActions from '@material-ui/core/CardActions';
-import FlatButton from '@material-ui/core/Button';
+import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import { 
     Create,
@@ -77,17 +77,17 @@ const UserEmail = ({ record }) => {
 };
 
 const CreateAccountButton = connect(null, {push: push })((props) => (
-	<FlatButton onClick={() => {
+	<Button color="primary" variant="contained" onClick={() => {
 		props.push("/accounts/create", {user: props.userId});
 	}
-	}>Create Account</FlatButton>
+	}>Create Account</Button>
 ));
 
 const ViewAccountButton = connect(null, {push: push })((props) => (
-	<FlatButton onClick={() => {
+	<Button color="primary" variant="outlined" onClick={() => {
 		props.push("/accounts/" + props.accountId, {user: props.userId});
 	}
-	}>Show Account</FlatButton>
+	}>Show Account</Button>
 ));
 
 const UserEditActions = ({ basePath, data, refresh, history }) => {
@@ -97,9 +97,9 @@ const UserEditActions = ({ basePath, data, refresh, history }) => {
             {/* <ShowButton basePath={basePath} record={data} />
             <ListButton basePath={basePath} />
             <DeleteButton basePath={basePath} record={data} /> */}
-            {/* <FlatButton primary label="Refresh" onClick={refresh} icon={<NavigationRefresh />} /> */}
+            {/* <Button primary label="Refresh" onClick={refresh} icon={<NavigationRefresh />} /> */}
             {/* Add your custom actions */}
-            {/* <FlatButton primary label="Add plate" onClick={customAction} /> */}
+            {/* <Button primary label="Add plate" onClick={customAction} /> */}
             { !account && <CreateAccountButton userId={data && data.id}/> }
             { account && <ViewAccountButton accountId={account}/> }
         </CardActions>
