@@ -5,9 +5,11 @@ import pure from 'recompose/pure';
 
 const CostField = ({ record, plans, elStyle }) => {
 	if (!plans) return null;
-	const frequency = get(record, "frequency");
-	const planCost = plans[frequency].plan.price;
-	const addOnCost = plans[frequency].addOn.amount;
+    const frequency = get(record, "frequency");
+    const planType = plans[frequency];
+    if (!planType) return null;
+	const planCost = planType.plan.price;
+	const addOnCost = planType.addOn.amount;
     return <span style={elStyle}>£{parseFloat(planCost) + (record.users.length - 1) * parseFloat(addOnCost)}</span>;
 }
 

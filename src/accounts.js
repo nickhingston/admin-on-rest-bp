@@ -145,6 +145,7 @@ const sanitizeEditProps = ({
 	refreshViewAction,
 	showNotification,
 	subscriptionPlanObj,
+	passwordResetObj,
 	...rest
 }) => rest
 class AccountEditClass extends Component {
@@ -165,7 +166,7 @@ class AccountEditClass extends Component {
 		const account = props.admin.resources.accounts.data[decodeURIComponent(props.match.params.id)];
 		const { subscription } = account || {};
 		const numberOfUsers = ((subscription && subscription.addOns && subscription.addOns.length && subscription.addOns[0].quantity) || 0) + 1;
-		const usersChanged = (account && !showUpdatePayment && numberOfUsers !== account.users.length);
+		const usersChanged = (account && account.users && !showUpdatePayment && numberOfUsers !== account.users.length);
 		return (
 
 			[<Edit key="account" title={<AccountTitle />} actions={<AccountEditActions />}  {...sanitizeEditProps(props)}>
