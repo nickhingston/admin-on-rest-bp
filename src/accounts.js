@@ -271,7 +271,7 @@ export const AccountCreate = (props) => {
 	return (
 		<Create {...props}>
 			<SimpleForm>
-				<TextInput source="name" />
+				<TextInput source="name" label="Company name" />
 			</SimpleForm>
 		</Create>
 	);
