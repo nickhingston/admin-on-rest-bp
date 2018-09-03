@@ -80,14 +80,14 @@ const CreateAccountButton = connect(null, {push: push })((props) => (
 	<Button color="primary" variant="contained" onClick={() => {
 		props.push("/accounts/create", {user: props.userId});
 	}
-	}>Create Account</Button>
+	}>Create Organisation</Button>
 ));
 
 const ViewAccountButton = connect(null, {push: push })((props) => (
 	<Button color="primary" variant="outlined" onClick={() => {
 		props.push("/accounts/" + props.accountId, {user: props.userId});
 	}
-	}>Show Account</Button>
+	}>Show Organisation</Button>
 ));
 
 const UserEditActions = ({ basePath, data, refresh, history }) => {

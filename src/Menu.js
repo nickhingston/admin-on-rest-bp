@@ -21,7 +21,7 @@ export default ({ resources, onMenuTap, logout }) => {
 			{isAdminUser && <MenuItemLink to="/users" exact primaryText="Users" leftIcon={createElement(UsersIcon)} onClick={onMenuTap}/> }
 			{isAdminUser && <MenuItemLink to="/cases" primaryText="Cases" leftIcon={createElement(CaseIcon)} onClick={onMenuTap}/> }
 			{isAdminUser &&	<MenuItemLink to="/plates" primaryText="Plates" leftIcon={createElement(PlatesIcon)} onClick={onMenuTap}/> }
-			{<MenuItemLink to={"/users/" + user.id} primaryText="Me" leftIcon={createElement(UserIcon)} onClick={onMenuTap}/> }
+			{<MenuItemLink to={"/users/" + user.id} primaryText="Profile" leftIcon={createElement(UserIcon)} onClick={onMenuTap}/> }
 			<Responsive xsmall={logout} medium={null} />
 		</div>
 	)

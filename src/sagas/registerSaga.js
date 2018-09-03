@@ -48,7 +48,7 @@ function *handleRegisterSuccess() {
      yield put(push('/'))
 }
 
-function *handleRegisterFailed1(data) {
+function *handleRegisterFailed(data) {
     console.log(data)
     if (data.error === 'Forbidden') {
         yield put(showNotification('mothership_admin.register.already_registered', 'warning'))
@@ -80,7 +80,7 @@ function *handleRegistrationSucceeded() {
 export default function *registerSaga() {
      yield all([
         yield takeEvery('REGISTER_CREATE_REQUEST_SUCCESS', handleRegisterSuccess),
-        yield takeEvery('REGISTER_CREATE_REQUEST_FAILURE', handleRegisterFailed1),
+        yield takeEvery('REGISTER_CREATE_REQUEST_FAILURE', handleRegisterFailed),
         yield takeEvery('REGISTER_GET_REQUEST_SUCCESS', handleRegisterGetSuccess),
         yield takeEvery('REGISTER_GET_REQUEST_FAILURE', handleRegisterGetFailed),
         yield takeEvery('REGISTER_USER_REQUEST_SUCCESS', handleRegistrationSucceeded),

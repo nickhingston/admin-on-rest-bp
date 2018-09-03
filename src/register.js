@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ViewTitle,
+import {
 	showNotification,
 	Notification,
 	Authenticated,
@@ -75,7 +75,7 @@ class RegisterClass extends Component {
 	}
 
 	render() {
-		const { translate, reg, classes } = this.props;
+		const { reg, classes } = this.props;
 		const toolbar = (<Toolbar>
 								<SubmitButton 
 									label='mothership_admin.register.create_user'
@@ -91,7 +91,6 @@ class RegisterClass extends Component {
 					{/* </div> */}
 
 					{ reg && reg.email && UserCreate({...reg, save:this.submit, values:reg, toolbar})}
-					{ reg===null && <ViewTitle title={translate('mothership_admin.register.expired')} />}
 				</Card>
 				<Notification/>
 			</div>

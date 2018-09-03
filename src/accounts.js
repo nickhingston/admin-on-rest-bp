@@ -157,6 +157,8 @@ class AccountEditClass extends Component {
 		props.subscriptionGetPlans();
 	}
 	render() {
+		const user = localStorage.user && JSON.parse(localStorage.user);
+    	const isAdminUser = (user && user.role === 'admin');
 		const showUpdatePayment = this.state.showUpdatePayment;
 		const {props} = this;
 		const addUserEmail = (email) => {
@@ -171,7 +173,7 @@ class AccountEditClass extends Component {
 
 			[<Edit key="account" title={<AccountTitle />} actions={<AccountEditActions />}  {...sanitizeEditProps(props)}>
 				<SimpleFormWithButtons autoComplete="nope" toolbar={<AccountToolbar redirect={null} account={account} subscriptionUpdate={props.subscriptionUpdate}/> } >
-					<DisabledInput source="id" />	
+					{ isAdminUser && <DisabledInput source="id" /> }
 					<TextInput label="Company Name" source="name" />
 					<TextInput label="Contact Email" source="contactEmail" />
 					<TextInput label="Contact First Name" source="contactFirstName" />

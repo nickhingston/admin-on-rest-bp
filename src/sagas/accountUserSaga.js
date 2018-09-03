@@ -1,5 +1,5 @@
-// import { put, takeEvery, all } from 'redux-saga/effects';
-import { UPDATE } from 'react-admin';
+import { put, takeEvery, all } from 'redux-saga/effects';
+import { UPDATE, showNotification } from 'react-admin';
 // import { push } from 'react-router-redux';
 
 // TODO: should this just be an action?
@@ -26,10 +26,9 @@ export const accountAddUser = (account, email) => {
 
 // saga
 
-// function *handleRegisterSuccess() {
-//      yield put(showNotification('mothership_admin.register.request_sent'))
-//      yield put(push('/'))
-// }
+function *handleAddUserFailure(response) {
+     yield put(showNotification(response.error, 'warning'))
+}
 
 // function *handleRegisterFailed1(data) {
 //     console.log(data)
@@ -60,13 +59,8 @@ export const accountAddUser = (account, email) => {
 //     yield put(push('/'))
 // }
 
-// export default function *registerSaga() {
-//      yield all([
-//         yield takeEvery('REGISTER_CREATE_REQUEST_SUCCESS', handleRegisterSuccess),
-//         yield takeEvery('REGISTER_CREATE_REQUEST_FAILURE', handleRegisterFailed1),
-//         yield takeEvery('REGISTER_GET_REQUEST_SUCCESS', handleRegisterGetSuccess),
-//         yield takeEvery('REGISTER_GET_REQUEST_FAILURE', handleRegisterGetFailed),
-//         yield takeEvery('REGISTER_USER_REQUEST_SUCCESS', handleRegistrationSucceeded),
-//         yield takeEvery('REGISTER_USER_REQUEST_FAILURE', handleRegistrationFailed)
-//      ])
-// }
+export default function *accountUserSaga() {
+     yield all([
+        yield takeEvery('ACCOUNT_ADD_USER_REQUEST_FAILURE', handleAddUserFailure),
+     ])
+}

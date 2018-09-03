@@ -32,6 +32,7 @@ import UserIcon from '@material-ui/icons/People'
 import PlatesIcon from '@material-ui/icons/Group'
 import CaseIcon from '@material-ui/icons/Group'
 import registerSaga, { registerGetReducer as registrationObj} from './sagas/registerSaga'
+import accountUserSaga from './sagas/accountUserSaga';
 import subscriptionSaga, {subscriptionPlanReducer as subscriptionPlanObj } from './sagas/subscriptionSaga'
 import { passwordSaga, passwordResetGetReducer as passwordResetObj} from './password'
 import enMessages from 'ra-language-english';
@@ -65,7 +66,7 @@ const App = () => {
             title="vPOP Admin"
             local={resolveBrowserLocale()} 
             i18nProvider={i18nProvider}
-            customSagas={[ registerSaga, passwordSaga, subscriptionSaga ]}
+            customSagas={[ registerSaga, passwordSaga, subscriptionSaga, accountUserSaga ]}
             customReducers={{ registrationObj, subscriptionPlanObj, passwordResetObj }} >
 
 
