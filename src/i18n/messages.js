@@ -85,7 +85,7 @@ export default {
         subscription: {
             succeeded: 'Subscription success',
             delete_succeeded: 'Subscription cancelled',
-            failed: 'Subscription failure',
+            failed: 'Subscription failure, please check payment details',
             delete_failed: 'Subscription cancel failure'
         },
         password: {
