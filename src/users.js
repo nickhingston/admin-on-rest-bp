@@ -113,23 +113,23 @@ export const UserEdit = (props) => {
     return (
     <Edit title={<UserEmail />} actions={<UserEditActions />} {...props}>
         <SimpleForm validate={validateUserSave}>
-			<ImageField source="picture" />
-            {isAdminUser  && <DisabledInput source="id" /> }
+            { isAdminUser && <ImageField source="picture" /> }
+            { isAdminUser  && <DisabledInput source="id" /> }
             <DisabledInput source="email"/>
 			<TextInput label="First Name" source="firstName" />
             <TextInput label="Last Name" source="lastName" />
-            {isAdminUser  && <SelectInput label="Role" source="role" choices={[
+            { isAdminUser  && <SelectInput label="Role" source="role" choices={[
                                 { id: 'admin', name: 'Admin' },
                                 { id: 'user', name: 'User' }
                             ]} />}
-            {isAdminUser  && <DateInput source="trialEnd" /> }
-            {isAdminUser  && <TextInput source="subscription.id" disabled/> }
-            {isAdminUser  && <TextInput source="subscription.status" disabled/> }
-            {account && <SelectInput label="Account Role" source="accountRole" choices={[
+            { isAdminUser  && <DateInput source="trialEnd" parse={(d) => new Date(d).valueOf()} /> }
+            { isAdminUser  && <TextInput source="subscription.id" disabled/> }
+            { isAdminUser  && <TextInput source="subscription.status" disabled/> }
+            { account && <SelectInput label="Account Role" source="accountRole" choices={[
                                 { id: 'admin', name: 'Admin' },
                                 { id: 'user', name: 'User' }
                             ]} /> }
-            {false && !account && <BraintreeDropIn currency="GBP" total="12.50" success={(a) => {
+            { false && !account && <BraintreeDropIn currency="GBP" total="12.50" success={(a) => {
                 console.log("complete:", a);
             }} />}
         </SimpleForm>

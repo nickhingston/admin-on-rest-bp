@@ -14,8 +14,9 @@ import { USER_LOGOUT } from 'ra-core/lib/actions/authActions';
 import createAppReducer from 'ra-core/lib/reducer';
 import { adminSaga } from 'ra-core/lib/sideEffect';
 import { TranslationProvider, defaultI18nProvider } from 'ra-core/lib/i18n';
-import formMiddleware from 'ra-core/lib/form/formMiddleware';
 import CoreAdminRouter from 'ra-core/lib/CoreAdminRouter';
+
+// import logger from 'redux-logger'
 
 import {
     Layout as DefaultLayout,
@@ -72,8 +73,8 @@ const CoreAdmin = ({
         compose(
             applyMiddleware(
                 sagaMiddleware,
-                routerMiddleware(routerHistory),
-                formMiddleware
+                // logger, 
+                routerMiddleware(routerHistory)
             ),
             typeof window !== 'undefined' && window.devToolsExtension
                 ? window.devToolsExtension()

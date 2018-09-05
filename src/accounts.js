@@ -16,12 +16,6 @@ import PaymentMethodField from "./PaymentMethodField.js";
 import CostField from "./CostField.js";
 import PlainTextField from "./PlainTextField.js";
 
-import FlatButton from '@material-ui/core/Button';
-import NavigationRefresh from '@material-ui/icons/Refresh';
-// import { push } from 'react-router-redux';
-// import { connect } from 'react-redux';
-
-// import { EmbeddedArrayField } from 'aor-embedded-array'
 import AccountUserIterator from './AccountUserIterator';
 
 import SimpleFormWithButtons from './mui/form/SimpleFormWithButtons'
@@ -38,8 +32,8 @@ import {
 	Filter,
 	Responsive,
 	SimpleList,
-	ShowButton,
-	ListButton,
+	// ShowButton,
+	// ListButton,
 	DeleteButton,
 	SelectInput,
 	// AutocompleteInput,
@@ -64,8 +58,6 @@ export const AccountList = (props) => {
             small={
                 <SimpleList
                     primaryText={record => record.name}
-                    secondaryText={record => `${record.views} views`}
-                    tertiaryText={record => new Date(record.published_at).toLocaleDateString()}
                 />
             }
             medium={
@@ -99,12 +91,12 @@ const AccountFilter = (props) => (
 
 
 
-const AccountEditActions = ({ basePath, data, refresh, history }) => (
+const AccountEditActions = ({ basePath, data, isAdminUser, refresh, history }) => (
     <CardActions >
-        <ShowButton basePath={basePath} record={data} />
-        <ListButton basePath={basePath} />
-        <DeleteButton basePath={basePath} record={data} resource="accounts" />
-        <FlatButton color="primary" label="Refresh" onClick={refresh} icon={<NavigationRefresh />}>Refresh</FlatButton>
+        {/* <ShowButton basePath={basePath} record={data} /> */}
+        {/* <ListButton basePath={basePath} /> */}
+		{ isAdminUser && <DeleteButton basePath={basePath} record={data} resource="accounts" /> }
+        {/* <FlatButton color="primary" label="Refresh" onClick={refresh} icon={<NavigationRefresh />}>Refresh</FlatButton> */}
         {/* Add your custom actions */}
         {/* <FlatButton primary label="Add plate" onClick={customAction} /> */}
 		{/* <CreatePlateItemButton plateId={data && data.id}/> */}
@@ -156,11 +148,19 @@ class AccountEditClass extends Component {
 		};
 		props.subscriptionGetPlans();
 	}
-	render() {
+
+	componentWillReceiveProps(props) {
 		const user = localStorage.user && JSON.parse(localStorage.user);
-    	const isAdminUser = (user && user.role === 'admin');
-		const showUpdatePayment = this.state.showUpdatePayment;
-		const {props} = this;
+		const isAdminUser = (user && user.role === 'admin');
+		this.setState({
+			user,
+			isAdminUser
+		});
+	}
+
+	render() {
+		const { isAdminUser, showUpdatePayment } = this.state;
+		const { props } = this;
 		const addUserEmail = (email) => {
 			// TODO: check actually an email!
 			props.accountAddUser(props.form["record-form"].values, email);
@@ -171,7 +171,7 @@ class AccountEditClass extends Component {
 		const usersChanged = (account && account.users && !showUpdatePayment && numberOfUsers !== account.users.length);
 		return (
 
-			[<Edit key="account" title={<AccountTitle />} actions={<AccountEditActions />}  {...sanitizeEditProps(props)}>
+			[<Edit key="account" title={<AccountTitle />} actions={<AccountEditActions isAdminUser={isAdminUser} />}  {...sanitizeEditProps(props)}>
 				<SimpleFormWithButtons autoComplete="nope" toolbar={<AccountToolbar redirect={null} account={account} subscriptionUpdate={props.subscriptionUpdate}/> } >
 					{ isAdminUser && <DisabledInput source="id" /> }
 					<TextInput label="Company Name" source="name" />
