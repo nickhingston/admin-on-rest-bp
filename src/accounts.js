@@ -64,6 +64,7 @@ export const AccountList = (props) => {
                 <Datagrid>
                     <TextField source="id" />
                     <TextField source="name" />
+					<TextField source="contactEmail" />
                     <EditButton />
                 </Datagrid>
             }
@@ -95,7 +96,7 @@ const AccountEditActions = ({ basePath, data, isAdminUser, refresh, history }) =
     <CardActions >
         {/* <ShowButton basePath={basePath} record={data} /> */}
         {/* <ListButton basePath={basePath} /> */}
-		{ isAdminUser && <DeleteButton basePath={basePath} record={data} resource="accounts" /> }
+		{ data && data.subscription && data.subscription.status !== 'Active' && <DeleteButton basePath={basePath} record={data} resource="accounts" /> }
         {/* <FlatButton color="primary" label="Refresh" onClick={refresh} icon={<NavigationRefresh />}>Refresh</FlatButton> */}
         {/* Add your custom actions */}
         {/* <FlatButton primary label="Add plate" onClick={customAction} /> */}
