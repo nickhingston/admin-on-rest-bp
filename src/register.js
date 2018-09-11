@@ -80,7 +80,7 @@ class RegisterClass extends Component {
 								<SubmitButton 
 									label='mothership_admin.register.create_user'
 									icon={null}
-									handleSubmitWithRedirect={null}
+									// handleSubmitWithRedirect={null}
                         		/> 	
 							</Toolbar>)
 		return (

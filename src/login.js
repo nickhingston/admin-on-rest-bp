@@ -130,13 +130,13 @@ class LoginRegisterTabbedForm_ extends Component {
 							<SubmitButton 	
 								label='mothership_admin.auth.sign_in'
 								icon={null}
-								handleSubmitWithRedirect={null}
+								// handleSubmitWithRedirect={null}
 								redirect="sign_in"
 							/> 	
 							<SubmitButton
 								label='mothership_admin.auth.forgot_password'
 								icon={null}
-								handleSubmitWithRedirect={null}
+								// handleSubmitWithRedirect={null}
 								raised={false}
 								redirect="forgot_password"
 							/> 
@@ -144,7 +144,7 @@ class LoginRegisterTabbedForm_ extends Component {
 							<SubmitButton 
 								label='mothership_admin.auth.register'
 								icon={null}
-								handleSubmitWithRedirect={null}
+								// handleSubmitWithRedirect={null}
 								redirect="register"
 							/>
 						</Toolbar>	
