@@ -71,22 +71,25 @@ const usersExporter = (data) => {
     const users = data.map(user => {
         const { subscription, ...userForExport } = user;
         let text = "None";
+        let expirationDate = "";
         if (subscription) {
             if (subscription.status) {
                 text = `${subscription.status} (${subscription.id})`;
             }
             else {
                 // apple?
-                text = `apple (${subscription.expirationDate})`;
+                text = 'apple';
             }
+            expirationDate = new Date(subscription.expirationDate);
         }
         userForExport.subscription = text;
+        userForExport.expirationDate = expirationDate;
         return  userForExport;
     });
 
     const csv = convertToCSV({
         data: users,
-        fields: ['id', 'email', 'subscription', 'role', 'accountRole', 'account']
+        fields: ['id', 'email', 'subscription', 'expirationDate', 'role', 'accountRole', 'account']
     });
     downloadCSV(csv, 'users');
 }
