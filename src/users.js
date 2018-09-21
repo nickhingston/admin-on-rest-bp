@@ -79,8 +79,14 @@ const usersExporter = (data) => {
             else {
                 // apple?
                 text = 'apple';
+                expirationDate = new Date(subscription.expirationDate);
             }
-            expirationDate = new Date(subscription.expirationDate);
+        }
+        else {
+            if (user.trialPeriodRemaining) {
+                text = "Trial";
+                expirationDate = new Date(user.trialEnd);
+            }
         }
         userForExport.subscription = text;
         userForExport.expirationDate = expirationDate;
