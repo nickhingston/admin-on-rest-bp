@@ -5,6 +5,9 @@ import { connect } from 'react-redux';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
+import { unparse as convertToCSV } from 'papaparse/papaparse.min';
+import get from 'lodash/get';
+
 import { 
     Create,
 	Edit,
@@ -21,7 +24,8 @@ import {
 	ImageField,
     EditButton,
     DateInput,
-    SelectInput
+    SelectInput,
+    downloadCSV
 } from 'react-admin';
 
 import BraintreeDropIn from "./BraintreeDropIn.js";
@@ -48,9 +52,47 @@ const SmallImageField = withStyles(sifStyle)(({ classes, ...props }) => (
 	<ImageField classes={classes} {...props} />
 ));
 
+const SubscriptionStatusField = ({ source, record = {} }) =>  {
+    const subscription = get(record, source);
+    let text = "None";
+    if (subscription) {
+        if (subscription.status) {
+            text = `${subscription.status} (${subscription.id})`;
+        }
+        else {
+            // apple?
+            text = `apple (${subscription.expirationDate})`;
+        }
+    }
+    return <span>{text}</span>;
+}
+
+const usersExporter = (data) => {
+    const users = data.map(user => {
+        const { subscription, ...userForExport } = user;
+        let text = "None";
+        if (subscription) {
+            if (subscription.status) {
+                text = `${subscription.status} (${subscription.id})`;
+            }
+            else {
+                // apple?
+                text = `apple (${subscription.expirationDate})`;
+            }
+        }
+        userForExport.subscription = text;
+        return  userForExport;
+    });
+
+    const csv = convertToCSV({
+        data: users,
+        fields: ['id', 'email', 'subscription', 'role', 'accountRole', 'account']
+    });
+    downloadCSV(csv, 'users');
+}
 
 export const UserList = (props) => (
-    <List title="All users" filters={<UserFilter />} {...props}>
+    <List title="All users" filters={<UserFilter />} exporter={usersExporter} {...props}>
 		<Responsive
             small={
                 <SimpleList
@@ -62,6 +104,17 @@ export const UserList = (props) => (
 					<SmallImageField source="picture" style={{ image: {backgroundColor: "black", height: "2rem" }}} />
                     <TextField source="id" />
                     <EmailField source="email" />
+                    <SubscriptionStatusField source="subscription" /> 
+                    {/* render={(subscription) => {
+                        if (!subscription) {
+                            return "none";
+                        }
+                        if (subscription.status) {
+                            return subscription.status
+                        }
+                        console.log("other:");
+                        console.log(subscription);
+                    }} /> */}
 					<TextField source="role" />
                     <EditButton />
                 </Datagrid>
