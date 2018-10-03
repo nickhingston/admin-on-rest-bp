@@ -143,7 +143,8 @@ export default (apiUrl, options , httpClient = fetchUtils.fetchJson) => {
     return (type, resource, params) => {
         // json-server doesn't handle WHERE IN requests, so we fallback to calling GET_ONE n times instead
         if (type === GET_MANY) {
-            return Promise.all(params.ids.map(id => httpClient(`${apiUrl}/${resource}/${id}`)))
+            const { id, ...rest } = params;
+            return Promise.all(params.ids.map(id => httpClient(`${apiUrl}/${resource}/${id}?${queryParameters(rest)}`)))
                 .then(responses => ({ data: responses.map(response => response.json) }));
         }
         const { url, options } = convertRESTRequestToHTTP(type, resource, params);
