@@ -23,6 +23,7 @@ import {
 	TextField,
 	ImageField,
     EditButton,
+    CloneButton,
     DateInput,
     SelectInput,
     downloadCSV
@@ -154,6 +155,8 @@ const ViewAccountButton = connect(null, {push: push })((props) => (
 
 const UserEditActions = ({ basePath, data, refresh, history }) => {
     const { account } = data || {};
+    const user = localStorage.user && JSON.parse(localStorage.user);
+    const isAdminUser = (user && user.role === 'admin');
     return (
         <CardActions >
             {/* <ShowButton basePath={basePath} record={data} />
@@ -164,6 +167,7 @@ const UserEditActions = ({ basePath, data, refresh, history }) => {
             {/* <Button primary label="Add plate" onClick={customAction} /> */}
             { !account && <CreateAccountButton userId={data && data.id}/> }
             { account && <ViewAccountButton accountId={account}/> }
+            { isAdminUser && <CloneButton basePath={basePath} record={data} /> }
         </CardActions>
     );
 };
@@ -204,31 +208,20 @@ const UserFilter = (props) => (
     </Filter>
 );
 
-
-// Create a user from a registration from
 export const UserCreate = (props) => {
+    let isAdminUser = JSON.parse(localStorage.user).role === 'admin';
+    if (!isAdminUser) {
+        return null;
+    }
 	return (
-        <SimpleForm {...props} >
-            {/* <TextField source="email" /> */}
-            <TextInput source="firstName" />
-            <TextInput source="lastName" />
-            <TextInput source="password" type="password"  />
-            <TextInput source="repeat_password" type="password" />
-        </SimpleForm>
-	);
-};
-
-// Create a user logged in with an admin user
-export const UserCreateWithAdmin = (props) => {
-	//let isAdminUser = JSON.parse(localStorage.user).role === 'admin';
-	return (
-		<Create {...props}>
-			<SimpleForm {...props} >
-                 <TextField source="email" /> 
-                <TextInput source="name" />
+        <Create {...props}>
+            <SimpleForm>
+                <TextInput source="email" />
+                <TextInput source="firstName" />
+                <TextInput source="lastName" />
                 <TextInput source="password" type="password"  />
-                <TextInput source="repeat_password" type="password" />
-			</SimpleForm>
-	 	</Create> 
+                <DateInput source="trialEnd" parse={(d) => new Date(d).valueOf()} />
+            </SimpleForm>
+        </Create>   
 	);
 };

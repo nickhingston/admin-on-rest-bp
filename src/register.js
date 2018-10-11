@@ -4,10 +4,12 @@ import {
 	Notification,
 	Authenticated,
 	translate,
+	SimpleForm,
+	TextField,
+	TextInput,
 	Toolbar } from 'react-admin'
 
 import { withRouter } from 'react-router-dom'
-import { UserCreate } from './users'
 import SubmitButton from './mui/buttons/SubmitButton'
 import { connect } from 'react-redux'
 import { withStyles } from '@material-ui/core/styles';
@@ -51,6 +53,18 @@ const styles = theme => ({
         backgroundColor: theme.palette.secondary[500],
     },
 });
+
+const UserCreate = (props) => {
+	return (
+        <SimpleForm {...props} >
+            <TextField source="email" />
+            <TextInput source="firstName" />
+            <TextInput source="lastName" />
+            <TextInput source="password" type="password"  />
+            <TextInput source="repeat_password" type="password" />
+        </SimpleForm>
+	);
+};
 
 class RegisterClass extends Component {
 	constructor(props) {
