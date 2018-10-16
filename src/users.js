@@ -26,6 +26,7 @@ import {
     CloneButton,
     DateInput,
     SelectInput,
+    Toolbar, SaveButton,
     downloadCSV
 } from 'react-admin';
 
@@ -172,13 +173,24 @@ const UserEditActions = ({ basePath, data, refresh, history }) => {
     );
 };
 
+const UserEditToolbar = props => (
+    <Toolbar {...props} >
+        <SaveButton
+            redirect={false}
+            submitOnEnter={true}
+        />
+        {/* no delete button! */}
+    </Toolbar>
+);
+
+
 export const UserEdit = (props) => {
     const user = localStorage.user && JSON.parse(localStorage.user);
     const isAdminUser = (user && user.role === 'admin');
     const account = user && user.account;
     return (
     <Edit title={<UserEmail />} actions={<UserEditActions />} {...props}>
-        <SimpleForm validate={validateUserSave}>
+        <SimpleForm validate={validateUserSave} toolbar={<UserEditToolbar />}>
             { isAdminUser && <ImageField source="picture" /> }
             { isAdminUser  && <DisabledInput source="id" /> }
             <DisabledInput source="email"/>
