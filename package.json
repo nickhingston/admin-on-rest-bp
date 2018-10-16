@@ -1,6 +1,7 @@
 {
   "name": "vpop-admin",
   "version": "1.0.0",
+  "homepage": "https://vpop-pro.com/admin",
   "private": true,
   "dependencies": {
     "react-scripts": "0.9.5",
