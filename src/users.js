@@ -97,7 +97,7 @@ const usersExporter = (data) => {
 
     const csv = convertToCSV({
         data: users,
-        fields: ['id', 'email', 'subscription', 'expirationDate', 'role', 'accountRole', 'account']
+        fields: ['id', 'email', 'firstName', 'lastName', 'subscription', 'expirationDate', 'role', 'accountRole', 'account']
     });
     downloadCSV(csv, 'users');
 }
