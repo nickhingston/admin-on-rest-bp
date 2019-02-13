@@ -56,6 +56,7 @@ const SmallImageField = withStyles(sifStyle)(({ classes, ...props }) => (
 
 const SubscriptionStatusField = ({ source, record = {} }) =>  {
     const subscription = get(record, source);
+    const account = get(record, "account");
     let text = "None";
     if (subscription) {
         if (subscription.status) {
@@ -65,6 +66,9 @@ const SubscriptionStatusField = ({ source, record = {} }) =>  {
             // apple?
             text = `apple (${subscription.expirationDate})`;
         }
+    }
+    else if (account) {
+        text = `Account (${account})`;
     }
     return <span>{text}</span>;
 }
@@ -88,6 +92,9 @@ const usersExporter = (data) => {
             if (user.trialPeriodRemaining) {
                 text = "Trial";
                 expirationDate = new Date(user.trialEnd);
+            }
+            else if (user.account) {
+                text = `Account (${user.account})`;
             }
         }
         userForExport.subscription = text;
