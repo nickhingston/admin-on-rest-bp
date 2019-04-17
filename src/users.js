@@ -26,7 +26,11 @@ import {
     CloneButton,
     DateInput,
     SelectInput,
-    Toolbar, SaveButton,
+    Toolbar,
+    SaveButton,
+    ExportButton,
+    CreateButton,
+    RefreshButton,
     downloadCSV
 } from 'react-admin';
 
@@ -109,8 +113,33 @@ const usersExporter = (data) => {
     downloadCSV(csv, 'users');
 }
 
+const UserListActions = ({
+    basePath,
+    currentSort,
+    exporter,
+    filterValues,
+    resource,
+    total
+}) => (
+    <CardActions>
+        <CreateButton basePath={basePath} />
+        <ExportButton
+            disabled={total === 0}
+            resource={resource}
+            sort={currentSort}
+            filter={filterValues}
+            exporter={usersExporter}
+            maxResults={10000}
+        />
+        <RefreshButton />
+        {/* Add your custom actions */}
+        {/* <Button color="primary" onClick={customAction}>Custom Action</Button> */}
+    </CardActions>
+);
+
+
 export const UserList = (props) => (
-    <List title="All users" filters={<UserFilter />} exporter={usersExporter} {...props}>
+    <List title="All users" filters={<UserFilter />} actions={<UserListActions />} {...props}>
 		<Responsive
             small={
                 <SimpleList
