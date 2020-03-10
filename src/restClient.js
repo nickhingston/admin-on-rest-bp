@@ -77,12 +77,19 @@ export default (apiUrl, options , httpClient = fetchUtils.fetchJson) => {
             break;
         }
         case CREATE:    
-            const query = {}
+            const query = {};
+            const { data } = params;
             if (params.access_token) {
                 query.access_token = params.access_token;
             }
+            if (resource === 'users' && data.cloneFromId) {
+                url = `${apiUrl}/${resource}/${data.cloneFromId}/clone?${queryParameters(query)}`;
+            }
+            else {
+                url = `${apiUrl}/${resource}?${queryParameters(query)}`;
+            }
             
-            url = `${apiUrl}/${resource}?${queryParameters(query)}`;
+            
             options.method = 'POST';
             options.body = JSON.stringify(params.data);
             break;
@@ -115,7 +122,7 @@ export default (apiUrl, options , httpClient = fetchUtils.fetchJson) => {
                 total: json.count,
             };
         case CREATE:
-            if (resource === 'users') {
+            if (resource === 'users' && json.user) {
                 return { data: { ...params.data, id: json.user.id, token: json.token } };    
             }
             return { data: { ...params.data, id: json.id } };

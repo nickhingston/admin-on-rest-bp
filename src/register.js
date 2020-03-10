@@ -58,6 +58,7 @@ const UserCreate = (props) => {
 	return (
         <SimpleForm {...props} >
             <TextField source="email" />
+			<TextInput source="title" />
             <TextInput source="firstName" />
             <TextInput source="lastName" />
             <TextInput source="password" type="password"  />

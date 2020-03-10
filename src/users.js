@@ -194,6 +194,7 @@ const UserEditActions = ({ basePath, data, refresh, history }) => {
     const { account } = data || {};
     const user = localStorage.user && JSON.parse(localStorage.user);
     const isAdminUser = (user && user.role === 'admin');
+    const cloneData = {...data, cloneFromId: (data && data.id) || null }
     return (
         <CardActions >
             {/* <ShowButton basePath={basePath} record={data} />
@@ -204,7 +205,7 @@ const UserEditActions = ({ basePath, data, refresh, history }) => {
             {/* <Button primary label="Add plate" onClick={customAction} /> */}
             { !account && <CreateAccountButton userId={data && data.id}/> }
             { account && <ViewAccountButton accountId={account}/> }
-            { isAdminUser && <CloneButton basePath={basePath} record={data} /> }
+            { isAdminUser && <CloneButton basePath={basePath} record={cloneData} /> }
         </CardActions>
     );
 };
@@ -230,6 +231,7 @@ export const UserEdit = (props) => {
             { isAdminUser && <ImageField source="picture" /> }
             { isAdminUser  && <DisabledInput source="id" /> }
             <DisabledInput source="email"/>
+            <TextInput source="title" />
 			<TextInput label="First Name" source="firstName" />
             <TextInput label="Last Name" source="lastName" />
             { isAdminUser  && <SelectInput label="Role" source="role" choices={[
@@ -264,6 +266,7 @@ export const UserCreate = (props) => {
 	return (
         <Create {...props}>
             <SimpleForm>
+                <TextInput source="title" />
                 <TextInput source="email" />
                 <TextInput source="firstName" />
                 <TextInput source="lastName" />
