@@ -79,7 +79,7 @@ export const CaseEdit = (props) => {
 					<SelectInput optionText="email" />
 				</ReferenceInput>
 			}	
-            
+            <BooleanInput source="isPublic" />
             <TextInput source="name" />
             {/* <ReferenceManyField label="People" reference="people" source="people" target="people">	
                 <Datagrid>
