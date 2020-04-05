@@ -2,6 +2,7 @@
 import React from 'react';
 
 import { 
+	BooleanInput,
 	List, 
 	Edit, 
 	Create, 
