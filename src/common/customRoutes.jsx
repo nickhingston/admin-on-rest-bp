@@ -1,8 +1,8 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import Register from "./register";
-import Login from "./login";
-import { PasswordEdit } from "./password";
+import Register from "components/pages/register";
+import Login from "components/pages/login";
+import { PasswordEdit } from "components/pages/password";
 
 export default [
 	<Route path="/register/:id" component={Register} />,

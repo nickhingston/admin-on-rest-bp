@@ -1,7 +1,6 @@
 // in src/accounts.js
-import React from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
-import CardActions from "@material-ui/core/CardActions";
 import MuiTextField from "@material-ui/core/TextField";
 import MuiFlatButton from "@material-ui/core/Button";
 import MuiToolbar from "@material-ui/core/Toolbar";
@@ -17,34 +16,26 @@ import {
 	Filter,
 	Responsive,
 	SimpleList,
-	// ShowButton,
-	// ListButton,
 	DeleteButton,
 	SelectInput,
-	// AutocompleteInput,
 	ArrayInput,
 	showNotification,
 	startUndoable as startUndoableAction,
 	SaveButton,
-	refreshView as refreshViewAction
+	refreshView as refreshViewAction,
+	TopToolbar
 } from "react-admin";
 // import { SaveButton } from "ra-ui-materialui/lib/button";
 // import { refreshView as refreshViewAction } from "ra-core";
-import { accountAddUser } from "./sagas/accountUserSaga";
-import { subscriptionUpdate, subscriptionDelete, subscriptionGetPlans } from "./sagas/subscriptionSaga";
-
-
-import BraintreeDropIn from "./BraintreeDropIn";
-import PaymentMethodField from "./PaymentMethodField";
-import CostField from "./CostField";
-import PlainTextField from "./PlainTextField";
-
-import AccountUserIterator from "./AccountUserIterator";
-
-import SimpleFormWithButtons from "./mui/form/SimpleFormWithButtons";
-
-import countries from "./countries.json";
-
+import { accountAddUser } from "sagas/accountUserSaga";
+import { subscriptionUpdate, subscriptionDelete, subscriptionGetPlans } from "sagas/subscriptionSaga";
+import BraintreeDropIn from "components/atoms/BraintreeDropIn";
+import PaymentMethodField from "components/atoms/PaymentMethodField";
+import CostField from "components/atoms/CostField";
+import PlainTextField from "components/atoms/PlainTextField";
+import AccountUserIterator from "components/molecules/AccountUserIterator";
+import SimpleFormWithButtons from "components/mui/form/SimpleFormWithButtons";
+import countries from "common/countries.json";
 
 export const AccountTitle = () => <span>Account</span>;
 
@@ -68,71 +59,43 @@ export const AccountList = (props) => (
 	</List>
 );
 
+export const AccountShow = () => {};
 
 const AccountFilter = (props) => (
 	<Filter {...props}>
 		<TextInput label="Search" source="q" alwaysOn />
-		{/* <ReferenceInput label="User" source="user.id" reference="users" allowEmpty>
-            <SelectInput optionText="email" />
-        </ReferenceInput> */}
 	</Filter>
 );
 
 
-// const CreatePlateItemButton = connect(null, {push: push })((props) => (
-// 	<FlatButton primary label="Add item" onClick={() => {
-// 		props.push("/plate-items/create", {plate: props.plateId});
-// 	}
-// 	}/>
-// ));
-
-
 const AccountEditActions = ({
-	basePath, data, isAdminUser, refresh, history
+	basePath, data
 }) => (
-	<CardActions>
-		{/* <ShowButton basePath={basePath} record={data} /> */}
-		{/* <ListButton basePath={basePath} /> */}
+	<TopToolbar>
 		{ data && data.subscription && data.subscription.status !== "Active" && <DeleteButton basePath={basePath} record={data} resource="accounts" /> }
-		{/* <FlatButton color="primary" label="Refresh" onClick={refresh} icon={<NavigationRefresh />}>Refresh</FlatButton> */}
-		{/* Add your custom actions */}
-		{/* <FlatButton primary label="Add plate" onClick={customAction} /> */}
-		{/* <CreatePlateItemButton plateId={data && data.id}/> */}
-	</CardActions>
+	</TopToolbar>
 );
 
 
-const AccountToolbar = (props) => (
-	<MuiToolbar>
-		{/* <ToolbarGroup> */}
-		<SaveButton handleSubmitWithRedirect={props.handleSubmitWithRedirect} redirect="edit" />
-		{/* </ToolbarGroup> */}
-	</MuiToolbar>
-);
+const AccountToolbar = (props) => {
+	const { handleSubmitWithRedirect } = props;
+	return (
+		<MuiToolbar>
+			{/* <ToolbarGroup> */}
+			<SaveButton handleSubmitWithRedirect={handleSubmitWithRedirect} redirect="edit" />
+			{/* </ToolbarGroup> */}
+		</MuiToolbar>
+	);
+};
 
-const setBasePath = (WrappedComponent, path) => class extends React.Component {
-	render() {
-		const { record } = this.props;
-		  // Notice that we pass through any additional props
-		  return <WrappedComponent {...this.props} basePath={path} record={record} />;
-	}
-	  };
+const setBasePath = (props) => (WrappedComponent, path) => {
+	const { record } = props;
+	// Notice that we pass through any additional props
+	return <WrappedComponent {...props} basePath={path} record={record} />;
+};
 
 const EditUserButton = setBasePath(EditButton, "/users");
 
-
-const sanitizeEditProps = ({
-	registrationObj,
-	accountAddUser,
-	subscriptionGetPlans,
-	subscriptionUpdate,
-	subscriptionDelete,
-	refreshViewAction,
-	showNotification,
-	subscriptionPlanObj,
-	passwordResetObj,
-	...rest
-}) => rest;
 
 const AccountEditClass = (props) => {
 	const user = localStorage.user && JSON.parse(localStorage.user);
@@ -140,14 +103,10 @@ const AccountEditClass = (props) => {
 	const [showUpdatePayment, setUpdatePayment] = useState(false);
 
 	const {
-		accountAddUser,
 		form,
 		admin,
 		match,
-		showNotification,
-		refreshViewAction,
 		plan,
-		subscriptionUpdate
 	} = props;
 
 	const addUserEmail = (email) => {
@@ -167,7 +126,7 @@ const AccountEditClass = (props) => {
 		&& numberOfUsers !== account.users.length);
 	return (
 		<>
-			<Edit key="account" title={<AccountTitle />} actions={<AccountEditActions isAdminUser={isAdminUser} />} {...sanitizeEditProps(props)}>
+			<Edit key="account" title={<AccountTitle />} actions={<AccountEditActions isAdminUser={isAdminUser} />} {...props}>
 				<SimpleFormWithButtons autoComplete="nope" toolbar={<AccountToolbar redirect={null} account={account} subscriptionUpdate={subscriptionUpdate} />}>
 					{ isAdminUser && <TextInput disabled source="id" /> }
 					<TextInput label="Company Name" source="name" />
@@ -214,7 +173,7 @@ const AccountEditClass = (props) => {
 				</SimpleFormWithButtons>
 
 			</Edit>
-			<Edit key="subscription" title="Subscription" actions={null} {...sanitizeEditProps(props)} style={{ paddingTop: "50px" }}>
+			<Edit key="subscription" title="Subscription" actions={null} {...props} style={{ paddingTop: "50px" }}>
 				<SimpleFormWithButtons autoComplete="nope" account={account} toolbar={null}>
 					{(subscription
 				&& (subscription.status === "Active" || subscription.status === "Pending")

@@ -1,17 +1,16 @@
 // Based on ra-ui-materialui/src/form/SimpleFormIterator.js
 
-import React, { Children, cloneElement, Component } from "react";
+import React, { Children, cloneElement } from "react";
 import PropTypes from "prop-types";
-import compose from "recompose/compose";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { get } from "lodash";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/RemoveCircleOutline";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
-// import classNames from "classnames";
+import classNames from "classnames";
 
-import FormInput from "react-admin";
+import { InputBase } from "@material-ui/core";
 
 const styles = (theme) => ({
 	root: {
@@ -59,34 +58,7 @@ const styles = (theme) => ({
 	},
 });
 
-export const AccountUserIterator = (props) => {
-	// we need a unique id for each field for a proper enter/exit animation
-	// but redux-form doesn't provide one (cf https://github.com/erikras/redux-form/issues/2735)
-	// so we keep an internal map between the field position and an autoincrement id
-	let nextId = props.fields.length
-		? props.fields.length
-		: props.defaultValue
-			? props.defaultValue.length
-			: 0;
-
-	// We check whether we have a defaultValue (which must be an array) before checking
-	// the fields prop which will always be empty for a new record.
-	// Without it, our ids wouldn't match the default value and we would get key warnings
-	// on the CssTransition element inside our render method
-	const ids = nextId > 0 ? Array.from(Array(nextId).keys()) : [];
-
-	const removeField = (index) => () => {
-		const { fields } = props;
-		ids.splice(index, 1);
-		fields.remove(index);
-	};
-
-	const addField = () => {
-		const { fields } = props;
-		ids.push(nextId += 1);
-		fields.push({});
-	};
-
+export const AccountUserIteratorComponent = (props) => {
 	const {
 		basePath,
 		classes = {},
@@ -99,7 +71,36 @@ export const AccountUserIterator = (props) => {
 		translate,
 		disableAdd,
 		disableRemove,
+		defaultValue
 	} = props;
+
+	// we need a unique id for each field for a proper enter/exit animation
+	// but redux-form doesn't provide one (cf https://github.com/erikras/redux-form/issues/2735)
+	// so we keep an internal map between the field position and an autoincrement id
+	let nextId = 0;
+
+	if (defaultValue) {
+		nextId = fields.length
+			? fields.length
+			: defaultValue.length;
+	}
+
+	// We check whether we have a defaultValue (which must be an array) before checking
+	// the fields prop which will always be empty for a new record.
+	// Without it, our ids wouldn't match the default value and we would get key warnings
+	// on the CssTransition element inside our render method
+	const ids = nextId > 0 ? Array.from(Array(nextId).keys()) : [];
+
+	const removeField = (index) => () => {
+		ids.splice(index, 1);
+		fields.remove(index);
+	};
+
+	const addField = () => {
+		ids.push(nextId += 1);
+		fields.push({});
+	};
+
 	const records = get(record, source);
 
 	if (!fields || !records || !records.length) {
@@ -122,22 +123,15 @@ export const AccountUserIterator = (props) => {
 					>
 						<li className={classes.line}>
 							{Children.map(children, (input) => (
-								<FormInput
+								<InputBase
 									basePath={
 										input.props.basePath || basePath
 									}
-									input={cloneElement(input, {
-										source: `${member}.${
-											input.props.source
-										}`,
-										label:
-                                                    input.props.label
-                                                    || input.props.source,
+									inputComponent={cloneElement(input, {
+										source: `${member}.${input.props.source}`,
+										label: input.props.label || input.props.source,
 									})}
-									record={
-										(records && records[index])
-                                                || {}
-									}
+									record={records && (records[index] || {})}
 									resource={resource}
 								/>
 							))}
@@ -183,25 +177,46 @@ export const AccountUserIterator = (props) => {
 	);
 };
 
-AccountUserIterator.defaultProps = {
+AccountUserIteratorComponent.defaultProps = {
 	disableAdd: false,
 	disableRemove: false,
+	defaultValue: "",
+	basePath: "",
+	children: null,
+	fields: null,
+	meta: null,
+	record: null,
+	source: "",
+	resource: "",
 };
 
-AccountUserIterator.propTypes = {
-	defaultValue: PropTypes.any,
+AccountUserIteratorComponent.propTypes = {
+	defaultValue: PropTypes.oneOf([
+		PropTypes.string,
+		PropTypes.array
+	]),
 	basePath: PropTypes.string,
 	children: PropTypes.node,
-	classes: PropTypes.object,
-	className: PropTypes.string,
-	fields: PropTypes.object,
-	meta: PropTypes.object,
-	record: PropTypes.object,
+	classes: PropTypes.shape({
+		leftIcon: PropTypes.string,
+		action: PropTypes.string,
+		line: PropTypes.string,
+		root: PropTypes.string,
+	}).isRequired,
+	fields: PropTypes.oneOf([
+		PropTypes.string,
+		PropTypes.array
+	]),
+	meta: PropTypes.shape({
+		error: PropTypes.string,
+		submitFailed: PropTypes.bool
+	}),
+	record: PropTypes.shape({}),
 	source: PropTypes.string,
 	resource: PropTypes.string,
-	translate: PropTypes.func,
+	translate: PropTypes.func.isRequired,
 	disableAdd: PropTypes.bool,
 	disableRemove: PropTypes.bool,
 };
 
-export default withStyles(styles)(AccountUserIterator);
+export default withStyles(styles)(AccountUserIteratorComponent);

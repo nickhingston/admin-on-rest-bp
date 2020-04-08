@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { reduxForm, Field } from "redux-form";
 import { connect } from "react-redux";
 import compose from "recompose/compose";
-
 import Card from "@material-ui/core/Card";
 import { TextField, Avatar } from "@material-ui/core";
 import LockIcon from "@material-ui/icons/LockOutlined";
@@ -16,18 +15,15 @@ import {
 	Toolbar,
 	useTranslate
 } from "react-admin";
-import SubmitButton from "./mui/buttons/SubmitButton";
-
-
-import { passwordReset as passwordResetAction } from "./password";
-import { registerRequest as registerRequestAction } from "./sagas/registerSaga";
+import SubmitButton from "components/mui/buttons/SubmitButton";
+import { passwordReset as passwordResetAction } from "components/pages/password";
+import { registerRequest as registerRequestAction } from "sagas/registerSaga";
 
 
 // TODO: need a way of /auth requests being redirected
 const masterKey = process.env.REACT_APP_MASTER_KEY;
 const host = process.env.REACT_APP_HOST;
 
-//  import TabbedForm from './mui/form/TabbedForm'
 
 const styles = (theme) => ({
 	main: {
@@ -99,7 +95,7 @@ const LoginRegisterTabbedForm = (props) => {
 
 	const { submitting, location, classes } = props;
 	const translate = useTranslate();
-console.log("HERE")
+
 	return (
 		<TabbedForm
 			save={loginRegisterOrForgotPwd}
@@ -111,7 +107,7 @@ console.log("HERE")
 								label="mothership_admin.auth.sign_in"
 								icon={null}
 								redirect="sign_in"
-								classes={{button: classes.button}}
+								classes={{ button: classes.button }}
 								translate={translate}
 							/>
 							<SubmitButton
@@ -119,7 +115,7 @@ console.log("HERE")
 								icon={null}
 								raised={false}
 								redirect="forgot_password"
-								classes={{button: classes.button}}
+								classes={{ button: classes.button }}
 								translate={translate}
 							/>
 						</Toolbar>
@@ -129,7 +125,7 @@ console.log("HERE")
 								label="mothership_admin.auth.register"
 								icon={null}
 								redirect="register"
-								classes={{button: classes.button}}
+								classes={{ button: classes.button }}
 								translate={translate}
 							/>
 						</Toolbar>
@@ -211,7 +207,7 @@ Login.defaultProps = {
 const enhance = compose(
 	reduxForm({
 		form: "signIn",
-		validate: (values, props) => {
+		validate: () => {
 			const errors = {};
 			// const { translate } = props;
 			// if (!values.username) errors.username = translate('mothership_admin.validation.required');
