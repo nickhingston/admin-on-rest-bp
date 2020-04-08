@@ -1,9 +1,8 @@
 // in src/users.js
 import React from 'react';
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router';
 import { connect } from 'react-redux';
-import CardActions from '@material-ui/core/CardActions';
-import Button from '@material-ui/core/Button';
+import { CardActions, Button } from "react-admin"
 import { withStyles } from '@material-ui/core/styles';
 import { unparse as convertToCSV } from 'papaparse/papaparse.min';
 import get from 'lodash/get';
@@ -16,7 +15,6 @@ import {
 	SimpleForm,
 	SimpleList,
 	Filter,
-	DisabledInput,
 	TextInput,
 	Datagrid,
 	EmailField,
@@ -229,8 +227,8 @@ export const UserEdit = (props) => {
     <Edit title={<UserEmail />} actions={<UserEditActions />} {...props}>
         <SimpleForm validate={validateUserSave} toolbar={<UserEditToolbar />}>
             { isAdminUser && <ImageField source="picture" /> }
-            { isAdminUser  && <DisabledInput source="id" /> }
-            <DisabledInput source="email"/>
+            { isAdminUser  && <TextInput disabled source="id" /> }
+            <TextInput disabled source="email"/>
             <TextInput source="title" />
 			<TextInput label="First Name" source="firstName" />
             <TextInput label="Last Name" source="lastName" />

@@ -12,8 +12,6 @@ import {
 	TextField, 
 	ImageField,
 	EditButton, 
-	DisabledInput, 
-	LongTextInput, 
 	ReferenceInput, 
 	SelectInput, 
 	SimpleForm, 
@@ -74,7 +72,7 @@ export const CaseEdit = (props) => {
 
     <Edit title={<CaseTitle />} {...props}>
         <SimpleForm>
-            <DisabledInput source="id" />
+            <TextInput disabled source="id" />
 			{	
 				<ReferenceInput label="User" source="user.id" reference="users" perPage={500}>
 					<SelectInput optionText="email" />
@@ -122,7 +120,7 @@ export const CaseCreate = (props) => {
 					</ReferenceInput>
 				}
 				<TextInput source="title" />
-				<LongTextInput source="body" />
+				<TextInput multiline source="body" />
 			</SimpleForm>
 		</Create>
 	);

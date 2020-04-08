@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
-import { getDefaultValues } from 'ra-core';
 import FormInput from 'ra-ui-materialui/lib/form/FormInput';
 import Toolbar from 'ra-ui-materialui/lib/form/Toolbar';
 
@@ -83,7 +82,7 @@ SimpleFormWithButtons.defaultProps = {
 
 const enhance = compose(
     connect((state, props) => ({
-        initialValues: getDefaultValues(state, props),
+        //initialValues: getDefaultValues(state, props),
     })),
     reduxForm({
         form: 'record-form',

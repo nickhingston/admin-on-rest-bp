@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import CardActions from '@material-ui/core/CardActions';
 import FlatButton from '@material-ui/core/Button';
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router';
 import { connect } from 'react-redux';
 import RecordButton from './recordButton';
 import PlateItemIterator from './PlateItemIterator';
@@ -15,7 +15,6 @@ import {
 	Datagrid, 
 	TextField, 
 	EditButton, 
-	DisabledInput, 
 	SimpleForm, 
 	TextInput, 
 	BooleanInput,
@@ -126,7 +125,7 @@ export class PlatesEdit extends Component {
 
 			<Edit title={<PlatesTitle />} actions={<PlatesEditActions />}  {...props}>
 				<SimpleForm>
-					<DisabledInput source="id" />	
+					<TextInput disabled source="id" />	
 					<TextInput source="familyName" />
 					<TextInput source="category" />
 					<TextInput source="manufacturer" />
@@ -182,7 +181,7 @@ export const PlateItemsList = (props) => {
 	return (
 		
 		<Datagrid>
-			<DisabledInput source="items[0].id" />
+			<TextInput disabled source="items[0].id" />
 			<TextField source="name" />
 			<TextField source="category" />
 			<TextField source="code" />

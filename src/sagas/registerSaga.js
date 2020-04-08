@@ -1,6 +1,6 @@
 import { put, takeEvery, all } from 'redux-saga/effects';
 import { showNotification, CREATE, GET_ONE } from 'react-admin';
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router';
 
 
 

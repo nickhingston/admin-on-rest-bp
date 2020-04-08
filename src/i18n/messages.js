@@ -57,7 +57,8 @@ export default {
             sign_in_error: 'Authentication failed, please retry',
 			logout: 'Logout',
             register: 'Register',
-            forgot_password: 'Forgot Password?'
+			forgot_password: 'Forgot Password?',
+			email: 'Email'
         },
         notification: {
             updated: 'Element updated',

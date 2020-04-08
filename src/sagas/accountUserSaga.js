@@ -1,6 +1,5 @@
 import { put, takeEvery, all } from 'redux-saga/effects';
 import { UPDATE, showNotification } from 'react-admin';
-// import { push } from 'react-router-redux';
 
 // TODO: should this just be an action?
 

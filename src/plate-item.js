@@ -11,8 +11,6 @@ import {
 	DeleteButton,
 	ShowButton,
 	EditButton, 
-	DisabledInput, 
-	LongTextInput, 
 	ReferenceInput, 
 	SelectInput, 
 	SimpleForm, 
@@ -69,12 +67,12 @@ export const PlateItemEdit = (props) => {
 			<ReferenceInput label="Plates" source="family" reference="plates" perPage={500} allowEmpty>
             		<SelectInput optionText={record => (record.manufacturer + " " + record.familyName)} />
         	</ReferenceInput>
-            <DisabledInput source="id" />	
+            <TextInput disabled source="id" />	
 			<TextInput source="name" />
 			<TextInput source="code" />
-			<LongTextInput source="src" />
+			<TextInput multiline source="src" />
 			<SVGField elStyle={{backgroundColor: "#000"}} source="src" />
-			<LongTextInput source="srcFront" />
+			<TextInput multiline source="srcFront" />
 			<SVGField elStyle={{backgroundColor: "#000"}} source="srcFront" />
         </SimpleForm>
     </Edit>)
@@ -93,8 +91,8 @@ export const PlateItemCreate = (props) => {
 				{/* <TextInput source="id" /> */}
 				<TextInput source="name" />
 				<TextInput source="code" />
-				<LongTextInput source="src" />
-				<LongTextInput source="srcFront" />
+				<TextInput multiline source="src" />
+				<TextInput multiline source="srcFront" />
 			</SimpleForm>
 		</Create>
 	);
