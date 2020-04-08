@@ -9,6 +9,7 @@ import { withStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/RemoveCircleOutline";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
 import classNames from "classnames";
+import { useTranslate } from "react-admin";
 
 import { InputBase } from "@material-ui/core";
 
@@ -68,11 +69,12 @@ export const AccountUserIteratorComponent = (props) => {
 		record,
 		resource,
 		source,
-		translate,
 		disableAdd,
 		disableRemove,
 		defaultValue
 	} = props;
+
+	const translate = useTranslate();
 
 	// we need a unique id for each field for a proper enter/exit animation
 	// but redux-form doesn't provide one (cf https://github.com/erikras/redux-form/issues/2735)
@@ -214,7 +216,6 @@ AccountUserIteratorComponent.propTypes = {
 	record: PropTypes.shape({}),
 	source: PropTypes.string,
 	resource: PropTypes.string,
-	translate: PropTypes.func.isRequired,
 	disableAdd: PropTypes.bool,
 	disableRemove: PropTypes.bool,
 };

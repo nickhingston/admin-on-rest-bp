@@ -1,5 +1,5 @@
 // in src/plates.js
-import React, { Component } from "react";
+import React from "react";
 import FlatButton from "@material-ui/core/Button";
 import { push } from "connected-react-router";
 import { connect } from "react-redux";
@@ -28,30 +28,28 @@ import PlateItemIterator from "components/molecules/PlateItemIterator";
 // import { EmbeddedArrayField } from 'aor-embedded-array'
 
 
-export const PlatesList = (props) => {
-	return (
-		<List title="Plates" filters={<PlatesFilter />} {...props}>
-			<Responsive
-				small={(
-					<SimpleList
-						primaryText={(record) => record.title}
-						secondaryText={(record) => `${record.views} views`}
-						tertiaryText={(record) => new Date(record.published_at).toLocaleDateString()}
-					/>
-				)}
-				medium={(
-					<Datagrid>
-						<TextField source="id" />
-						<TextField source="familyName" />
-						<TextField source="category" />
-						<TextField source="manufacturer" />
-						<EditButton />
-					</Datagrid>
-				)}
-			/>
-		</List>
-	);
-};
+export const PlatesList = (props) => (
+	<List title="Plates" filters={<PlatesFilter />} {...props}>
+		<Responsive
+			small={(
+				<SimpleList
+					primaryText={(record) => record.title}
+					secondaryText={(record) => `${record.views} views`}
+					tertiaryText={(record) => new Date(record.published_at).toLocaleDateString()}
+				/>
+			)}
+			medium={(
+				<Datagrid>
+					<TextField source="id" />
+					<TextField source="familyName" />
+					<TextField source="category" />
+					<TextField source="manufacturer" />
+					<EditButton />
+				</Datagrid>
+			)}
+		/>
+	</List>
+);
 
 export const PlatesTitle = ({ record }) => (
 	<span>
@@ -113,57 +111,47 @@ const PlatesEditActions = ({
 // const ShowButtonPlate = setBasePath(ShowButton);
 // const EditButtonPlate = setBasePath(EditButton);
 
-export class PlatesEdit extends Component {
-	constructor(props) {
-		super(props);
-		this.upClick = this.upClick.bind(this);
-	}
-
-	upClick(record, items) {
+export const PlatesEdit = (props) => {
+	const upClick = (record, items) => {
 		const i = items.indexOf(record);
 		if (i > 0) {
 			items.splice(i - 1, 0, items.splice(i, 1)[0]);
 		}
-		this.setState({});
-	}
+	};
 
-	render() {
-		const { props } = this;
-		return (
+	return (
+		<Edit title={<PlatesTitle />} actions={<PlatesEditActions />} {...props}>
+			<SimpleForm>
+				<TextInput disabled source="id" />
+				<TextInput source="familyName" />
+				<TextInput source="category" />
+				<TextInput source="manufacturer" />
+				<TextInput source="defaultItemIndex" />
+				<AutocompleteInput
+					source="publishState"
+					choices={[
+						{ id: "test", name: "Test" },
+						{ id: "published", name: "Published" },
+						{ id: "removed", name: "Removed" },
+					]}
+				/>
+				<BooleanInput source="flippable" />
+				<TextInput source="flipAxis" />
+				<ArrayInput source="items">
+					<PlateItemIterator disableAdd>
+						<TextInput disabled source="id" style={{ display: "inline-block", margin: "10px" }} />
+						<TextInput disabled source="name" style={{ display: "inline-block", margin: "10px" }} />
+						<TextInput disabled source="code" style={{ display: "inline-block", margin: "10px" }} />
+						<RecordButton source="id" onClick={upClick} label="^" style={{ display: "inline-block", margin: "10px" }} />
+						<ShowButton basePath="/plate-items" style={{ display: "inline-block", margin: "10px", width: "100px" }} />
+						<EditButton basePath="/plate-items" style={{ display: "inline-block", margin: "10px", width: "100px" }} />
+					</PlateItemIterator>
+				</ArrayInput>
 
-			<Edit title={<PlatesTitle />} actions={<PlatesEditActions />} {...props}>
-				<SimpleForm>
-					<TextInput disabled source="id" />
-					<TextInput source="familyName" />
-					<TextInput source="category" />
-					<TextInput source="manufacturer" />
-					<TextInput source="defaultItemIndex" />
-					<AutocompleteInput
-						source="publishState"
-						choices={[
-							{ id: "test", name: "Test" },
-							{ id: "published", name: "Published" },
-							{ id: "removed", name: "Removed" },
-						]}
-					/>
-					<BooleanInput source="flippable" />
-					<TextInput source="flipAxis" />
-					<ArrayInput source="items">
-						<PlateItemIterator disableAdd>
-							<TextInput disabled source="id" style={{ display: "inline-block", margin: "10px" }} />
-							<TextInput disabled source="name" style={{ display: "inline-block", margin: "10px" }} />
-							<TextInput disabled source="code" style={{ display: "inline-block", margin: "10px" }} />
-							<RecordButton source="id" onClick={this.upClick} label="^" style={{ display: "inline-block", margin: "10px" }} />
-							<ShowButton basePath="/plate-items" style={{ display: "inline-block", margin: "10px", width: "100px" }} />
-							<EditButton basePath="/plate-items" style={{ display: "inline-block", margin: "10px", width: "100px" }} />
-						</PlateItemIterator>
-					</ArrayInput>
-
-				</SimpleForm>
-			</Edit>
-		);
-	}
-}
+			</SimpleForm>
+		</Edit>
+	);
+};
 
 
 export const PlatesCreate = (props) => (

@@ -9,6 +9,7 @@ import { withStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/RemoveCircleOutline";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
 import classNames from "classnames";
+import { useTranslate } from "react-admin";
 
 import { InputBase } from "@material-ui/core";
 
@@ -68,7 +69,6 @@ export const AccountUserIterator = (props) => {
 		record,
 		resource,
 		source,
-		translate,
 		disableAdd,
 		disableRemove,
 		defaultValue
@@ -77,6 +77,8 @@ export const AccountUserIterator = (props) => {
 	// but redux-form doesn't provide one (cf https://github.com/erikras/redux-form/issues/2735)
 	// so we keep an internal map between the field position and an autoincrement id
 	let nextId = 0;
+
+	const translate = useTranslate();
 
 	if (defaultValue) {
 		nextId = fields.length
@@ -212,7 +214,6 @@ AccountUserIterator.propTypes = {
 	record: PropTypes.shape({}),
 	source: PropTypes.string,
 	resource: PropTypes.string,
-	translate: PropTypes.func.isRequired,
 	disableAdd: PropTypes.bool,
 	disableRemove: PropTypes.bool,
 };
