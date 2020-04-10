@@ -39,6 +39,7 @@ export default (apiUrl, options, httpClient = fetchUtils.fetchJson) => {
      */
 	const convertRESTRequestToHTTP = (type, resource, params) => {
 		let url = "";
+		const restOptions = {};
 		switch (type) {
 			case GET_LIST: {
 				const { page, perPage } = params.pagination;
@@ -73,8 +74,8 @@ export default (apiUrl, options, httpClient = fetchUtils.fetchJson) => {
 			case UPDATE: {
 				const { id, data, ...rest } = params;
 				url = `${apiUrl}/${resource}/${id}?${queryParameters(rest)}`;
-				options.method = "PUT";
-				options.body = JSON.stringify(data);
+				restOptions.method = "PUT";
+				restOptions.body = JSON.stringify(data);
 				break;
 			}
 			case CREATE: {
@@ -91,19 +92,19 @@ export default (apiUrl, options, httpClient = fetchUtils.fetchJson) => {
 				}
 
 
-				options.method = "POST";
-				options.body = JSON.stringify(params.data);
+				restOptions.method = "POST";
+				restOptions.body = JSON.stringify(params.data);
 				break;
 			}
 			case DELETE:
 				url = `${apiUrl}/${resource}/${params.id}?${queryParameters({})}`;
-				options.method = "DELETE";
-				options.body = JSON.stringify(params.data);
+				restOptions.method = "DELETE";
+				restOptions.body = JSON.stringify(params.data);
 				break;
 			default:
 				throw new Error(`Unsupported fetch action type ${type}`);
 		}
-		return { url, options };
+		return { url, restOptions };
 	};
 
 	/**
@@ -157,8 +158,8 @@ export default (apiUrl, options, httpClient = fetchUtils.fetchJson) => {
 			return Promise.all(params.ids.map((thisId) => httpClient(`${apiUrl}/${resource}/${thisId}?${queryParameters(rest)}`)))
 				.then((responses) => ({ data: responses.map((response) => response.json) }));
 		}
-		const { url, newOptions } = convertRESTRequestToHTTP(type, resource, params);
-		return httpClient(url, newOptions)
+		const { url, restOptions } = convertRESTRequestToHTTP(type, resource, params);
+		return httpClient(url, restOptions)
 			.then((response) => convertHTTPResponseToREST(response, type, resource, params));
 	};
 };

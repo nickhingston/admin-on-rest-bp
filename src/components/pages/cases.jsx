@@ -13,24 +13,28 @@ import {
 	ImageField,
 	EditButton,
 	ReferenceInput,
-	SelectInput,
 	SimpleForm,
 	TextInput,
 	Filter,
 	Responsive,
 	SimpleList,
-	ShowButton
+	ShowButton,
+	AutocompleteInput
 } from "react-admin";
 
 
 export const CaseList = (props) => (
-	<List {...props} filters={<CaseFilter />}>
+	<List {...props} filters={<CaseFilter />} bulkActionButtons={false}>
 		<Responsive
 			small={(
 				<SimpleList
-					primaryText={(record) => record.title}
-					secondaryText={(record) => `${record.views} views`}
-					tertiaryText={(record) => new Date(record.published_at).toLocaleDateString()}
+					primaryText={(record) => record.name}
+					secondaryText={(record) => (
+						<ReferenceField label="User" source="user.id" reference="users" basePath="users" record={record}>
+							<TextField source="email" />
+						</ReferenceField>
+					)}
+					tertiaryText={(record) => `${record.xrays.length} xrays`}
 				/>
 			)}
 			medium={(
@@ -59,9 +63,6 @@ const CaseTitle = ({ record }) => (
 const CaseFilter = (props) => (
 	<Filter {...props}>
 		<TextInput label="Search" source="q" alwaysOn />
-		<ReferenceInput label="User" source="user.id" reference="users" perPage={500} allowEmpty>
-			<SelectInput optionText="email" optionValue="id" />
-		</ReferenceInput>
 	</Filter>
 );
 
@@ -71,7 +72,7 @@ export const CaseEdit = (props) => (
 		<SimpleForm>
 			<TextInput disabled source="id" />
 			<ReferenceInput label="User" source="user.id" reference="users" perPage={500}>
-				<SelectInput optionText="email" />
+				<AutocompleteInput optionText="email" />
 			</ReferenceInput>
 			<BooleanInput source="isPublic" />
 			<TextInput source="name" />
@@ -93,23 +94,11 @@ export const CaseEdit = (props) => (
 	</Edit>
 );
 
-export const CaseCreate = (props) => {
-	console.log(props);
-	const isAdminUser = JSON.parse(localStorage.user).role === "admin";
-	return (
-		<Create {...props}>
-			<SimpleForm>
-				{
-					isAdminUser
-					&& (
-						<ReferenceInput label="User" source="user.id" reference="users" allowEmpty>
-							<SelectInput optionText="email" />
-						</ReferenceInput>
-					)
-				}
-				<TextInput source="title" />
-				<TextInput multiline source="body" />
-			</SimpleForm>
-		</Create>
-	);
-};
+export const CaseCreate = (props) => (
+	<Create {...props}>
+		<SimpleForm>
+			<TextInput source="name" />
+			<TextInput multiline source="notes" />
+		</SimpleForm>
+	</Create>
+);

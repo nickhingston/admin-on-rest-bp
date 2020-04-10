@@ -11,8 +11,6 @@ import AddIcon from "@material-ui/icons/AddCircleOutline";
 import classNames from "classnames";
 import { useTranslate } from "react-admin";
 
-import { InputBase } from "@material-ui/core";
-
 const styles = (theme) => ({
 	root: {
 		padding: 0,
@@ -124,19 +122,20 @@ export const AccountUserIteratorComponent = (props) => {
 						classNames="fade"
 					>
 						<li className={classes.line}>
-							{Children.map(children, (input) => (
-								<InputBase
-									basePath={
-										input.props.basePath || basePath
-									}
-									inputComponent={cloneElement(input, {
-										source: `${member}.${input.props.source}`,
-										label: input.props.label || input.props.source,
-									})}
-									record={records && (records[index] || {})}
-									resource={resource}
-								/>
-							))}
+							{ Children.map(children, (input) => {
+								const bp = input.props.basePath || basePath;
+								const rec = (records && records[index]) || {};
+								const src = input.props.source ? `${member}.${input.props.source}` : null;
+								const newInput = cloneElement(input, {
+									source: src,
+									label: input.props.label || input.props.source,
+									style: input.props.style,
+									basePath: bp,
+									record: rec,
+									resource
+								});
+								return newInput;
+							})}
 							{!disableRemove && index > 0 && (
 								<span className={classes.action}>
 									<Button
@@ -183,13 +182,11 @@ AccountUserIteratorComponent.defaultProps = {
 	disableAdd: false,
 	disableRemove: false,
 	defaultValue: "",
-	basePath: "",
 	children: null,
 	fields: null,
 	meta: null,
 	record: null,
 	source: "",
-	resource: "",
 };
 
 AccountUserIteratorComponent.propTypes = {
@@ -197,7 +194,6 @@ AccountUserIteratorComponent.propTypes = {
 		PropTypes.string,
 		PropTypes.array
 	]),
-	basePath: PropTypes.string,
 	children: PropTypes.node,
 	classes: PropTypes.shape({
 		leftIcon: PropTypes.string,
@@ -215,7 +211,6 @@ AccountUserIteratorComponent.propTypes = {
 	}),
 	record: PropTypes.shape({}),
 	source: PropTypes.string,
-	resource: PropTypes.string,
 	disableAdd: PropTypes.bool,
 	disableRemove: PropTypes.bool,
 };

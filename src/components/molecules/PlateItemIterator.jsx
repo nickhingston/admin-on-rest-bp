@@ -11,8 +11,6 @@ import AddIcon from "@material-ui/icons/AddCircleOutline";
 import classNames from "classnames";
 import { useTranslate } from "react-admin";
 
-import { InputBase } from "@material-ui/core";
-
 const styles = (theme) => ({
 	root: {
 		padding: 0,
@@ -59,7 +57,7 @@ const styles = (theme) => ({
 	},
 });
 
-export const AccountUserIterator = (props) => {
+export const PlateItemIterator = (props) => {
 	const {
 		basePath,
 		classes = {},
@@ -79,7 +77,6 @@ export const AccountUserIterator = (props) => {
 	let nextId = 0;
 
 	const translate = useTranslate();
-
 	if (defaultValue) {
 		nextId = fields.length
 			? fields.length
@@ -110,7 +107,6 @@ export const AccountUserIterator = (props) => {
 	while (ids.length < fields.length) {
 		ids.push(nextId += 1);
 	}
-
 	return (
 		<ul className={classes.root}>
 			{submitFailed && error && <span>{error}</span>}
@@ -122,19 +118,20 @@ export const AccountUserIterator = (props) => {
 						classNames="fade"
 					>
 						<li className={classes.line}>
-							{Children.map(children, (input) => (
-								<InputBase
-									basePath={input.props.basePath || basePath}
-									inputComponent={cloneElement(input, {
-										source: `${member}.${input.props.source}`,
-										label: input.props.label || input.props.source,
-									})}
-									record={(records && records[index]) || {}}
-									resource={resource}
-									records={records}
-								/>
-							))}
-							{/* </section> */}
+							{ Children.map(children, (input) => {
+								const bp = input.props.basePath || basePath;
+								const rec = (records && records[index]) || {};
+								const src = input.props.source ? `${member}.${input.props.source}` : null;
+								const newInput = cloneElement(input, {
+									source: src,
+									label: input.props.label || input.props.source,
+									style: input.props.style,
+									basePath: bp,
+									record: rec,
+									resource
+								});
+								return newInput;
+							})}
 							{!disableRemove && index > 0 && (
 								<span className={classes.action}>
 									<Button
@@ -177,25 +174,21 @@ export const AccountUserIterator = (props) => {
 	);
 };
 
-AccountUserIterator.defaultProps = {
+PlateItemIterator.defaultProps = {
 	disableAdd: false,
 	disableRemove: false,
-	defaultValue: "",
-	basePath: "",
+	defaultValue: null,
 	children: null,
-	fields: null,
 	meta: null,
 	record: null,
 	source: "",
-	resource: "",
 };
 
-AccountUserIterator.propTypes = {
+PlateItemIterator.propTypes = {
 	defaultValue: PropTypes.oneOf([
 		PropTypes.string,
 		PropTypes.array
 	]),
-	basePath: PropTypes.string,
 	children: PropTypes.node,
 	classes: PropTypes.shape({
 		leftIcon: PropTypes.string,
@@ -203,19 +196,17 @@ AccountUserIterator.propTypes = {
 		line: PropTypes.string,
 		root: PropTypes.string,
 	}).isRequired,
-	fields: PropTypes.oneOf([
-		PropTypes.string,
-		PropTypes.array
-	]),
+	fields: PropTypes.shape({
+		value: PropTypes.array
+	}).isRequired,
 	meta: PropTypes.shape({
 		error: PropTypes.string,
 		submitFailed: PropTypes.bool
 	}),
 	record: PropTypes.shape({}),
 	source: PropTypes.string,
-	resource: PropTypes.string,
 	disableAdd: PropTypes.bool,
 	disableRemove: PropTypes.bool,
 };
 
-export default withStyles(styles)(AccountUserIterator);
+export default withStyles(styles)(PlateItemIterator);

@@ -14,23 +14,29 @@ import {
 	TextInput,
 	Filter,
 	Responsive,
-	SimpleList
+	SimpleList,
+	DateField
 } from "react-admin";
 
 
 export const PostList = (props) => (
-	<List {...props} filters={<PostFilter />}>
+	<List
+		{...props}
+		filters={<PostFilter />}
+		bulkActionButtons={false}
+		sort={{ field: "updatedAt", order: "DESC" }}
+	>
 		<Responsive
 			small={(
 				<SimpleList
 					primaryText={(record) => record.title}
-					secondaryText={(record) => `${record.views} views`}
-					tertiaryText={(record) => new Date(record.published_at).toLocaleDateString()}
+					secondaryText={(record) => `${record.user.title} ${record.user.firstName} ${record.user.lastName}`}
+					tertiaryText={(record) => new Date(record.updatedAt).toLocaleDateString()}
 				/>
 			)}
 			medium={(
 				<Datagrid>
-					<TextField source="id" />
+					<DateField source="updatedAt" />
 					<ReferenceField label="User" source="user.id" reference="users">
 						<TextField source="email" />
 					</ReferenceField>
@@ -54,9 +60,6 @@ const PostTitle = ({ record }) => (
 const PostFilter = (props) => (
 	<Filter {...props}>
 		<TextInput label="Search" source="q" alwaysOn />
-		<ReferenceInput label="User" source="user.id" reference="users" allowEmpty>
-			<SelectInput optionText="email" />
-		</ReferenceInput>
 	</Filter>
 );
 
@@ -70,8 +73,8 @@ export const PostEdit = (props) => {
 				{
 					isAdminUser
 				&& (
-					<ReferenceInput label="User" source="user.id" reference="users">
-						<SelectInput optionText="name" />
+					<ReferenceInput label="User" source="user.id" perPage={500} reference="users">
+						<SelectInput optionText="email" />
 					</ReferenceInput>
 				)
 				}
@@ -84,7 +87,6 @@ export const PostEdit = (props) => {
 };
 
 export const PostCreate = (props) => {
-	console.log(props);
 	const isAdminUser = JSON.parse(localStorage.user).role === "admin";
 	return (
 		<Create {...props}>
@@ -92,7 +94,7 @@ export const PostCreate = (props) => {
 				{
 					isAdminUser
 					&& (
-						<ReferenceInput label="User" source="user.id" reference="users" allowEmpty>
+						<ReferenceInput label="User" source="user.id" reference="users" perPage={500} allowEmpty>
 							<SelectInput optionText="email" />
 						</ReferenceInput>
 					)

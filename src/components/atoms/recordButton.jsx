@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 const RecordButton = (props) => {
 	const {
-		elStyle, record, records, label, onClick
+		style, record, records, label, onClick
 	} = props;
 
 	const handleClick = (e) => {
@@ -15,7 +15,7 @@ const RecordButton = (props) => {
 	return (
 		<button
 			type="button"
-			style={elStyle}
+			style={style}
 			onClick={handleClick}
 		>
 			{label}
@@ -25,13 +25,22 @@ const RecordButton = (props) => {
 
 
 RecordButton.propTypes = {
-	elStyle: PropTypes.objectOf(PropTypes.string),
-	record: PropTypes.objectOf(PropTypes.string),
+	style: PropTypes.objectOf(PropTypes.string),
+	record: PropTypes.shape({
+		id: PropTypes.string,
+		name: PropTypes.string,
+		family: PropTypes.object,
+		code: PropTypes.string,
+		src: PropTypes.string,
+		srcFront: PropTypes.string,
+		srcBack: PropTypes.string,
+		srcEnd: PropTypes.string
+	}),
 	onClick: PropTypes.func.isRequired
 };
 
 RecordButton.defaultProps = {
-	elStyle: {},
+	style: {},
 	record: {}
 };
 

@@ -2,9 +2,9 @@
 import React from "react";
 import { push } from "connected-react-router";
 import { connect } from "react-redux";
+import Button from "@material-ui/core/Button";
 import {
 	TopToolbar,
-	Button,
 	Create,
 	Edit,
 	List,
@@ -33,7 +33,7 @@ import { unparse as convertToCSV } from "papaparse/papaparse.min";
 import { get } from "lodash";
 
 
-import BraintreeDropIn from "components/atoms/BraintreeDropIn";
+import BraintreePaymentForm from "components/atoms/BraintreePaymentForm";
 
 const validateUserSave = (val) => {
 	const values = val;
@@ -129,14 +129,12 @@ const UserListActions = ({
 			maxResults={10000}
 		/>
 		<RefreshButton />
-		{/* Add your custom actions */}
-		{/* <Button color="primary" onClick={customAction}>Custom Action</Button> */}
 	</TopToolbar>
 );
 
 
 export const UserList = (props) => (
-	<List title="All users" filters={<UserFilter />} actions={<UserListActions />} {...props}>
+	<List title="All users" filters={<UserFilter />} actions={<UserListActions />} bulkActionButtons={false} {...props}>
 		<Responsive
 			small={(
 				<SimpleList
@@ -167,6 +165,7 @@ const CreateAccountButton = connect(null, { push })((props) => (
 		onClick={() => {
 			props.push("/accounts/create", { user: props.userId });
 		}}
+		size="small"
 	>
 		Create Organisation
 	</Button>
@@ -179,6 +178,7 @@ const ViewAccountButton = connect(null, { push })((props) => (
 		onClick={() => {
 			props.push(`/accounts/${props.accountId}`, { user: props.userId });
 		}}
+		size="small"
 	>
 		Show Organisation
 	</Button>
@@ -248,7 +248,7 @@ export const UserEdit = (props) => {
 					/>
 				) }
 				{ false && !account && (
-					<BraintreeDropIn
+					<BraintreePaymentForm
 						currency="GBP"
 						total="12.50"
 						success={(a) => {

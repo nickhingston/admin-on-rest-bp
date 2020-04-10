@@ -7,7 +7,6 @@ import {
 	Create,
 	Datagrid,
 	TextField,
-	DeleteButton,
 	ShowButton,
 	EditButton,
 	ReferenceInput,
@@ -53,29 +52,25 @@ export const PlateItemTitle = ({ record }) => (
 	</span>
 );
 
-const PlateItemEditActions = ({
-	basePath, data
-}) => (
+const PlateItemEditActions = ({ basePath }) => (
 	<TopToolbar>
-		<DeleteButton resource="plate-item" basePath={basePath} record={data} />
-		<ShowButton resource="plate-item" basePath={basePath} record={data} />
+		<ShowButton resource="plate-item" basePath={basePath} />
 	</TopToolbar>
 );
 
 export const PlateItemEdit = (props) => (
-
 	<Edit title={<PlateItemTitle />} actions={<PlateItemEditActions />} {...props}>
 		<SimpleForm>
-			<ReferenceInput label="Plates" source="family" reference="plates" perPage={500} allowEmpty>
+			<ReferenceInput label="Plates" source="family" reference="plates" perPage={500} sort={{ field: "manufacturer", order: "ASC" }} allowEmpty>
 				<SelectInput optionText={(record) => (`${record.manufacturer} ${record.familyName}`)} />
 			</ReferenceInput>
-			<TextInput disabled source="id" />
-			<TextInput source="name" />
-			<TextInput source="code" />
-			<TextInput multiline source="src" />
-			<SVGField elStyle={{ backgroundColor: "#000" }} source="src" />
-			<TextInput multiline source="srcFront" />
-			<SVGField elStyle={{ backgroundColor: "#000" }} source="srcFront" />
+			<TextInput disabled source="id" fullWidth />
+			<TextInput source="name" fullWidth />
+			<TextInput source="code" fullWidth />
+			<TextInput multiline source="src" fullWidth />
+			<SVGField elStyle={{ backgroundColor: "#FFF" }} source="src" />
+			<TextInput multiline source="srcFront" fullWidth />
+			<SVGField elStyle={{ backgroundColor: "#FFF" }} source="srcFront" />
 		</SimpleForm>
 	</Edit>
 );
@@ -117,8 +112,8 @@ export const PlateItemShow = (props) => (
 			<TextField source="id" />
 			<TextField source="name" />
 			<TextField source="code" />
-			<SVGField elStyle={{ backgroundColor: "#000" }} source="src" />
-			<SVGField elStyle={{ backgroundColor: "#000" }} source="srcFront" />
+			<SVGField elStyle={{ backgroundColor: "#FFF" }} source="src" />
+			<SVGField elStyle={{ backgroundColor: "#FFF" }} source="srcFront" />
 		</SimpleForm>
 	</Show>
 );

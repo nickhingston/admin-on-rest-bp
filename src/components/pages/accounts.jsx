@@ -29,7 +29,7 @@ import {
 // import { refreshView as refreshViewAction } from "ra-core";
 import { accountAddUser } from "sagas/accountUserSaga";
 import { subscriptionUpdate, subscriptionDelete, subscriptionGetPlans } from "sagas/subscriptionSaga";
-import BraintreeDropIn from "components/atoms/BraintreeDropIn";
+import BraintreePaymentForm from "components/atoms/BraintreePaymentForm";
 import PaymentMethodField from "components/atoms/PaymentMethodField";
 import CostField from "components/atoms/CostField";
 import PlainTextField from "components/atoms/PlainTextField";
@@ -96,11 +96,11 @@ const setBasePath = (props) => (WrappedComponent, path) => {
 
 const EditUserButton = setBasePath(EditButton, "/users");
 
-
 const AccountEditClass = (props) => {
 	const user = localStorage.user && JSON.parse(localStorage.user);
 	const isAdminUser = (user && user.role === "admin");
 	const [showUpdatePayment, setUpdatePayment] = useState(false);
+	const [frequency, setFrequency] = useState("monthly")
 
 	const {
 		form,
@@ -112,6 +112,13 @@ const AccountEditClass = (props) => {
 	const addUserEmail = (email) => {
 		// TODO: check actually an email!
 		accountAddUser(form["record-form"].values, email);
+	};
+
+	const complete = () => {
+		showNotification("mothership_admin.subscription.succeeded");
+		setTimeout(() => {
+			refreshViewAction();
+		}, 10);
 	};
 
 	const account = admin.resources.accounts.data[decodeURIComponent(match.params.id)];
@@ -196,7 +203,7 @@ const AccountEditClass = (props) => {
 						<MuiFlatButton key="updatePayment" color="primary" onClick={setUpdatePayment(!showUpdatePayment)} style={{ display: "inline-block", margin: "10px", marginTop: "20px" }}>{showUpdatePayment ? "Hide" : "Change"}</MuiFlatButton>
 						{showUpdatePayment
 						&& ((
-							<BraintreeDropIn
+							<BraintreePaymentForm
 								submitButtonText="Update Payment Method"
 								key="braintree-dropin-update"
 								currency="GBP"
@@ -247,18 +254,14 @@ const AccountEditClass = (props) => {
 								{ id: "monthly", name: "Monthly" },
 								{ id: "yearly", name: "Yearly" }
 							]}
+							onChange={(event) => setFrequency(event.target.value)}
 						/>
 						<CostField key="cost-field" label="Cost" source="frequency" plans={plan} />
-						<BraintreeDropIn
+						<BraintreePaymentForm
 							submitButtonText="SUBSCRIBE"
-							key="braintree-dropin-pay"
 							currency="GBP"
-							success={() => {
-								showNotification("mothership_admin.subscription.succeeded");
-								setTimeout(() => {
-									refreshViewAction();
-								}, 10);
-							}}
+							success={complete}
+							frequency={frequency}
 							failure={(err) => {
 								console.warn(err);
 								showNotification("mothership_admin.subscription.failed", "warning");
