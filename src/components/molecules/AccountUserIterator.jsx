@@ -57,7 +57,7 @@ const styles = (theme) => ({
 	},
 });
 
-export const AccountUserIteratorComponent = (props) => {
+const AccountUserIterator = (props) => {
 	const {
 		basePath,
 		classes = {},
@@ -102,7 +102,6 @@ export const AccountUserIteratorComponent = (props) => {
 	};
 
 	const records = get(record, source);
-
 	if (!fields || !records || !records.length) {
 		return null;
 	}
@@ -110,7 +109,6 @@ export const AccountUserIteratorComponent = (props) => {
 	while (ids.length < fields.length) {
 		ids.push(nextId += 1);
 	}
-
 	return (
 		<ul className={classes.root}>
 			{submitFailed && error && <span>{error}</span>}
@@ -178,18 +176,17 @@ export const AccountUserIteratorComponent = (props) => {
 	);
 };
 
-AccountUserIteratorComponent.defaultProps = {
+AccountUserIterator.defaultProps = {
 	disableAdd: false,
 	disableRemove: false,
-	defaultValue: "",
+	defaultValue: null,
 	children: null,
-	fields: null,
 	meta: null,
 	record: null,
 	source: "",
 };
 
-AccountUserIteratorComponent.propTypes = {
+AccountUserIterator.propTypes = {
 	defaultValue: PropTypes.oneOf([
 		PropTypes.string,
 		PropTypes.array
@@ -201,10 +198,9 @@ AccountUserIteratorComponent.propTypes = {
 		line: PropTypes.string,
 		root: PropTypes.string,
 	}).isRequired,
-	fields: PropTypes.oneOf([
-		PropTypes.string,
-		PropTypes.array
-	]),
+	fields: PropTypes.shape({
+		value: PropTypes.array
+	}).isRequired,
 	meta: PropTypes.shape({
 		error: PropTypes.string,
 		submitFailed: PropTypes.bool
@@ -215,4 +211,4 @@ AccountUserIteratorComponent.propTypes = {
 	disableRemove: PropTypes.bool,
 };
 
-export default withStyles(styles)(AccountUserIteratorComponent);
+export default withStyles(styles)(AccountUserIterator);

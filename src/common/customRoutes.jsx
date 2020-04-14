@@ -9,6 +9,7 @@ export default [
 	<Route
 		path={["/login", "/login/1"]}
 		render={(props) => <Login {...props} />}
+		noLayout
 	/>,
 	<Route
 		path="/password-resets/:id"

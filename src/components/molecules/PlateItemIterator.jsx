@@ -3,7 +3,7 @@
 import React, { Children, cloneElement } from "react";
 import PropTypes from "prop-types";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import get from "lodash/get";
+import { get } from "lodash";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/RemoveCircleOutline";
@@ -57,7 +57,7 @@ const styles = (theme) => ({
 	},
 });
 
-export const PlateItemIterator = (props) => {
+const PlateItemIterator = (props) => {
 	const {
 		basePath,
 		classes = {},
@@ -71,12 +71,14 @@ export const PlateItemIterator = (props) => {
 		disableRemove,
 		defaultValue
 	} = props;
+
+	const translate = useTranslate();
+
 	// we need a unique id for each field for a proper enter/exit animation
 	// but redux-form doesn't provide one (cf https://github.com/erikras/redux-form/issues/2735)
 	// so we keep an internal map between the field position and an autoincrement id
 	let nextId = 0;
 
-	const translate = useTranslate();
 	if (defaultValue) {
 		nextId = fields.length
 			? fields.length

@@ -28,7 +28,7 @@ const SubmitButtonComponent = (props) => {
 			if (e) {
 				e.preventDefault();
 			}
-			handleSubmitWithRedirect(redirect)();
+			handleSubmitWithRedirect(redirect);
 		}
 	};
 

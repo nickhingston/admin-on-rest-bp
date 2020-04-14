@@ -1,0 +1,33 @@
+.tableViewCell {
+	display: flex;
+	flex-direction: column;
+	min-height: fit-content;
+
+	margin: 0px 16px;
+	padding-top: 16px;
+	padding-bottom: 16px;
+
+	border-bottom: 0px solid rgba(29,35,36,0.3);
+}
+
+.selected {
+	margin: 0px;
+	padding: 16px;
+	background-color: rgba(29, 35, 36, 0.10);
+	border-bottom: 1px solid transparent;
+}
+
+.columns {
+	display: flex;
+	flex-direction: row;
+}
+
+.center {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.headline {
+	color: #fff;
+}

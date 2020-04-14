@@ -1,8 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { reduxForm, Field } from "redux-form";
 import { connect } from "react-redux";
-import compose from "recompose/compose";
 import Card from "@material-ui/core/Card";
 import { TextField, Avatar } from "@material-ui/core";
 import LockIcon from "@material-ui/icons/LockOutlined";
@@ -13,7 +11,8 @@ import {
 	FormTab,
 	TabbedForm,
 	Toolbar,
-	useTranslate
+	useTranslate,
+	TextInput
 } from "react-admin";
 import SubmitButton from "components/mui/buttons/SubmitButton";
 import { passwordReset as passwordResetAction } from "components/pages/password";
@@ -133,28 +132,32 @@ const LoginRegisterTabbedForm = (props) => {
 			}
 		>
 			<FormTab label="mothership_admin.auth.sign_in">
-				<Field
+				<TextInput
 					id="username"
 					name="username"
 					className={classes.textField}
 					component={renderInput}
 					label={translate("mothership_admin.auth.username")}
+					style={{ marginTop: 20 }}
+					fullWidth
 					disabled={submitting}
 				/>
-				<Field
+				<TextInput
 					name="password"
 					component={renderInput}
 					label={translate("mothership_admin.auth.password")}
 					type="password"
+					style={{ marginTop: 20 }}
+					fullWidth
 					disabled={submitting}
 				/>
 			</FormTab>
 			<FormTab label="mothership_admin.auth.sign_up">
-				<Field
+				<TextInput
 					name="email"
 					label={translate("mothership_admin.auth.email")}
-					component={renderInput}
-					// floatingLabelText="email"
+					style={{ marginTop: 20 }}
+					fullWidth
 					disabled={submitting}
 				/>
 			</FormTab>
@@ -186,7 +189,6 @@ Login.propTypes = {
 	userLogin: PropTypes.func.isRequired,
 	passwordReset: PropTypes.func.isRequired,
 	className: PropTypes.string,
-	authProvider: PropTypes.func.isRequired,
 	classes: PropTypes.shape({
 		textField: PropTypes.string,
 		main: PropTypes.string,
@@ -204,24 +206,8 @@ Login.defaultProps = {
 	className: ""
 };
 
-const enhance = compose(
-	reduxForm({
-		form: "signIn",
-		validate: () => {
-			const errors = {};
-			// const { translate } = props;
-			// if (!values.username) errors.username = translate('mothership_admin.validation.required');
-			// if (!values.password) errors.password = translate('mothership_admin.validation.required');
-			// if (!values.email) errors.email	 = translate('mothership_admin.validation.required');
-			return errors;
-		},
-		asyncBlurFields: []
-	}),
-	connect(null, {
-		userLogin: userLoginAction,
-		passwordReset: passwordResetAction,
-		registerRequest: registerRequestAction
-	})
-);
-
-export default withStyles(styles)(enhance(Login));
+export default withStyles(styles)(connect(null, {
+	userLogin: userLoginAction,
+	passwordReset: passwordResetAction,
+	registerRequest: registerRequestAction
+})(Login));

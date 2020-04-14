@@ -58,7 +58,11 @@ const App = () => (
 		local={resolveBrowserLocale()}
 		i18nProvider={i18nProvider}
 		customSagas={[registerSaga, passwordSaga, subscriptionSaga, accountUserSaga]}
-		customReducers={{ registrationObj, subscriptionPlanObj, passwordResetObj }}
+		customReducers={{
+			registrationObj,
+			subscriptionPlanObj,
+			passwordResetObj
+		}}
 	>
 		<Resource name="posts" list={PostList} edit={PostEdit} create={PostCreate} icon={PostIcon} />
 		<Resource name="users" list={UserList} edit={UserEdit} create={UserCreate} icon={UserIcon} />
