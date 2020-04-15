@@ -1,5 +1,4 @@
 import React from "react";
-import { connect } from "react-redux";
 import scriptLoader from "react-async-script-loader";
 
 
@@ -7,7 +6,7 @@ import braintree from "braintree-web";
 import PropTypes from "prop-types";
 import { Button, TextField, ButtonGroup } from "@material-ui/core";
 import {
-	SelectArrayInput,
+	SelectInput,
 	SimpleForm
 } from "react-admin";
 import Alert from "components/atoms/Alert";
@@ -23,20 +22,22 @@ class BraintreePaymentFormComponent extends React.Component {
 		const { user } = props;
 		const { billingDetails } = user;
 		const { billingAddress } = billingDetails || {};
-		const email = (billingDetails && billingDetails.email) || user.email;
-		const cardholderName = (billingDetails && billingDetails.cardholderName);
-		const phoneNumber = (billingDetails && billingDetails.phoneNumber) || user.telephone;
-		const givenName = (billingAddress && billingAddress.givenName) || user.firstName;
-		const surname = (billingAddress && billingAddress.surname) || user.lastName;
-		const streetAddress = (billingAddress && billingAddress.streetAddress) || user.streetAddress1;
+		// The empty strings are needed to ensure the input is a controlled component.
+		const email = (billingDetails && billingDetails.email) || user.email || "";
+		const cardholderName = (billingDetails && billingDetails.cardholderName) || "";
+		const phoneNumber = (billingDetails && billingDetails.phoneNumber) || user.telephone || "";
+		const givenName = (billingAddress && billingAddress.givenName) || user.firstName || "";
+		const surname = (billingAddress && billingAddress.surname) || user.lastName || "";
+		const streetAddress = (billingAddress && billingAddress.streetAddress) || user.streetAddress1 || "";
 		const extendedAddress = (
 			billingAddress
 			&& billingAddress.extendedAddress
-		) || user.streetAddress2;
-		const locality = (billingAddress && billingAddress.locality) || user.city;
-		const region = (billingAddress && billingAddress.region) || user.stateCounty;
-		const postalCode = (billingAddress && billingAddress.postalCode) || user.postCode;
-		const countryCodeAlpha2 = (billingAddress && billingAddress.countryCodeAlpha2) || user.countryCode || "US";
+		) || user.streetAddress2 || "";
+		const locality = (billingAddress && billingAddress.locality) || user.city || "";
+		const region = (billingAddress && billingAddress.region) || user.stateCounty || "";
+		const postalCode = (billingAddress && billingAddress.postalCode) || user.postCode || "";
+		const countryCodeAlpha2 = (billingAddress && billingAddress.countryCodeAlpha2)
+			|| user.countryCode;
 		this.state = {
 			paymentOption: "paypal",
 			email,
@@ -61,11 +62,10 @@ class BraintreePaymentFormComponent extends React.Component {
 		this.getToken();
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate() {
 		const { isScriptLoaded, isScriptLoadSucceed } = this.props;
 		const { paypalCheckout } = this.state;
 
-		console.log(!prevProps.isScriptLoaded, isScriptLoaded, isScriptLoadSucceed, paypalCheckout)
 		if (!this.paypalButtonLoaded && isScriptLoaded) {
 			if (isScriptLoadSucceed) {
 				if (paypalCheckout) {
@@ -82,21 +82,12 @@ class BraintreePaymentFormComponent extends React.Component {
 		const hostedFields = await braintree.hostedFields.create({
 			authorization: clientToken,
 			styles: {
-				"input": {
+				input: {
 					"font-size": "16px",
 					"font-weight": "400",
 					"line-height": "19px",
-					"height": "51px",
-					"padding": "16px",
-					"background-color": "rgba(0, 0, 0, 0.04)",
-					"border-top-left-radius": "4px",
-					"border-top-right-radius": "4px",
-					"color": "rgba(0, 0, 0, 0.8)",
-					"transition-delay": "0s",
-					"transition-duration": "0.2s",
-					"transition-property": "background-color",
-					"transition-timing-function": "cubic-bezier(0, 0, 0.2, 1)",
-					"border-bottom": "1px solid rgba(0, 0, 0, 0.4)"
+					height: "25px",
+					padding: "27px 12px 10px"
 				}
 				// Can't get :focus to work!!! Arrhhhgg
 			},
@@ -150,7 +141,6 @@ class BraintreePaymentFormComponent extends React.Component {
 
 	getToken = () => {
 		const { isScriptLoadSucceed } = this.props;
-		console.log(isScriptLoadSucceed)
 		const headers = { "Content-Type": "application/json" };
 		// const me = this;
 		const options = {
@@ -173,7 +163,6 @@ class BraintreePaymentFormComponent extends React.Component {
 				const json = await response.json();
 				const { paypalCheckout } = await this.setupPaypalComponent(json);
 				this.setState({ paypalCheckout }, () => {
-					console.log(isScriptLoadSucceed)
 					if (paypalCheckout && isScriptLoadSucceed) {
 						this.setupPaypalButton();
 					}
@@ -188,7 +177,6 @@ class BraintreePaymentFormComponent extends React.Component {
 		const env = (isSandbox ? "sandbox" : "production");
 		this.paypalButtonLoaded = true;
 		// Set up PayPal with the checkout.js library
-		console.log(paypal, isSandbox, paypalCheckout)
 		return paypal.Button.render({
 			env,
 			style: {
@@ -294,21 +282,25 @@ class BraintreePaymentFormComponent extends React.Component {
 					this.setState({ requestingPayment: false });
 					response.json()
 						.then((json) => {
-							console.log(json);
 							let errorMessage = json.error || "Payment failed: unknown";
 							if (errorMessage === "Do Not Honor") {
 								errorMessage = "Not Authorised";
 							}
 							this.presentDialog("Error", errorMessage, true);
-							console.log(response);
 						})
 						.catch(() => {
 							const errorMessage = "Payment failed: network error?";
 							this.presentDialog("Error", errorMessage, true);
-							console.log(response);
 						});
 				}
 			});
+	}
+
+	textChanged = (ev) => {
+		const obj = ev.target;
+		const newState = {};
+		newState[obj.dataset.value] = obj.value;
+		this.setState(newState);
 	}
 
 	submitPressed() {
@@ -402,12 +394,12 @@ class BraintreePaymentFormComponent extends React.Component {
 
 		return (
 			<>
-				<SimpleForm className={`braintree-container${requestingPayment ? " disabled" : ""}`}>
+				<SimpleForm toolbar={null} className={`braintree-container${requestingPayment ? " disabled" : ""}`}>
 					<TableViewCell
 						caption="Payment options"
 						border={0}
 						body={(
-							<ButtonGroup>
+							<ButtonGroup fullWidth>
 								<Button
 									onClick={() => this.setState({ paymentOption: "paypal" })}
 									variant={paymentOption === "paypal" ? "contained" : "outlined"}
@@ -439,43 +431,49 @@ class BraintreePaymentFormComponent extends React.Component {
 
 							<div style={{ display: paymentOption === "card" ? "block" : "none" }}>
 								<TableViewCell caption="Card details" border={0}>
-									<TextField className="form-control" id="billing-given-name" variant="filled" label="Name on card" textChanged={(text) => this.setState({ cardholderName: text })} text={cardholderName} />
+									<TextField value={cardholderName} inputProps={{ "data-value": "cardholderName" }} className="form-control" id="billing-given-name" variant="filled" label="Name on card" onChange={this.textChanged} />
 									<span className="input-group-addon"><span className="glyphicon glyphicon-credit-card" /></span>
 									{/* braintree replaces these DIVs with inputs -
 									style with class name - this class is then applied... */}
-									<div id="hf-number" className="form-control input-like-div noPadding" style={{ height: "50px" }} />
+									<div className="MuiInputBase-root MuiFilledInput-root MuiFilledInput-underline">
+										<div id="hf-number" className="form-control input-like-div noPadding" style={{ height: "50px" }} />
+									</div>
 									<span className="input-group-addon"><span className="glyphicon glyphicon-calendar" /></span>
-									<div id="hf-date" className="form-control input-like-div noPadding" style={{ height: "50px" }} />
+									<div className="MuiInputBase-root MuiFilledInput-root MuiFilledInput-underline">
+										<div id="hf-date" className="form-control input-like-div noPadding" style={{ height: "50px" }} />
+									</div>
 									<span className="input-group-addon"><span className="glyphicon glyphicon-lock" /></span>
-									<div id="hf-cvv" className="form-control input-like-div noPadding" style={{ height: "50px" }} />
+									<div className="MuiInputBase-root MuiFilledInput-root MuiFilledInput-underline">
+										<div id="hf-cvv" className="form-control input-like-div noPadding" style={{ height: "50px" }} />
+									</div>
 								</TableViewCell>
 
 								<TableViewCell caption="Name" border={0}>
-									<TextField className="form-control" id="billing-given-name" variant="filled" label="First name" textChanged={(text) => this.setState({ givenName: text })} text={givenName} />
-									<TextField className="form-control" id="billing-surname" variant="filled" label="Last name" textChanged={(text) => this.setState({ surname: text })} text={surname} />
+									<TextField value={givenName} inputProps={{ "data-value": "givenName" }} className="form-control" id="billing-given-name" variant="filled" label="First name" onChange={this.textChanged} />
+									<TextField value={surname} inputProps={{ "data-value": "surname" }} className="form-control" id="billing-surname" variant="filled" label="Last name" onChange={this.textChanged} />
 								</TableViewCell>
 
 								<TableViewCell caption="Email" border={0}>
-									<TextField type="email" className="form-control" id="email" variant="filled" label="Email" textChanged={(text) => this.setState({ email: text })} text={email} />
+									<TextField value={email} inputProps={{ "data-value": "email" }} type="email" className="form-control" id="email" variant="filled" label="Email" onChange={this.textChanged} />
 								</TableViewCell>
 
 								<TableViewCell caption="Phone number" border={0}>
-									<TextField type="tel" className="form-control" id="billing-phone" variant="filled" label="Phone number" textChanged={(text) => this.setState({ phoneNumber: text })} text={phoneNumber} />
+									<TextField value={phoneNumber} inputProps={{ "data-value": "phoneNumber" }} type="tel" className="form-control" id="billing-phone" variant="filled" label="Phone number" onChange={this.textChanged} />
 								</TableViewCell>
 
 								<TableViewCell caption="Address" border={0}>
-									<TextField className="form-control" id="billing-street-address" variant="filled" label="Address" textChanged={(text) => this.setState({ streetAddress: text })} text={streetAddress} />
-									<TextField className="form-control" id="billing-extended-address" variant="filled" label="Address" textChanged={(text) => this.setState({ extendedAddress: text })} text={extendedAddress} />
-									<TextField className="form-control" id="billing-locality" variant="filled" label="Town / City" textChanged={(text) => this.setState({ locality: text })} text={locality} />
-									<TextField className="form-control" id="billing-region" variant="filled" label="County / State / Region" textChanged={(text) => this.setState({ region: text })} text={region} />
-									<TextField className="form-control" id="billing-postal-code" variant="filled" label="Zip / Postcode" textChanged={(text) => this.setState({ postalCode: text })} text={postalCode} />
-									<SelectArrayInput
+									<TextField value={streetAddress} inputProps={{ "data-value": "streetAddress" }} className="form-control" id="billing-street-address" variant="filled" label="Address" onChange={this.textChanged} />
+									<TextField value={extendedAddress} inputProps={{ "data-value": "extendedAddress" }} className="form-control" id="billing-extended-address" variant="filled" label="Address" onChange={this.textChanged} />
+									<TextField value={locality} inputProps={{ "data-value": "locality" }} className="form-control" id="billing-locality" variant="filled" label="Town / City" onChange={this.textChanged} />
+									<TextField value={region} inputProps={{ "data-value": "region" }} className="form-control" id="billing-region" variant="filled" label="County / State / Region" onChange={this.textChanged} />
+									<TextField value={postalCode} inputProps={{ "data-value": "postalCode" }} className="form-control" id="billing-postal-code" variant="filled" label="Zip / Postcode" onChange={this.textChanged} />
+									<SelectInput
 										id="billing-country-code"
 										source="countries"
 										choices={Object.values(countries)}
 										optionText="title"
 										optionValue="key"
-										// TODO: Need to fix this - defaultValue={countryCodeAlpha2}
+										defaultValue={countryCodeAlpha2}
 									/>
 								</TableViewCell>
 
@@ -503,7 +501,7 @@ BraintreePaymentFormComponent.propTypes = {
 	isScriptLoadSucceed: PropTypes.bool.isRequired,
 	isScriptLoaded: PropTypes.bool.isRequired,
 	isSandbox: PropTypes.bool,
-	total: PropTypes.string.isRequired,
+	total: PropTypes.number.isRequired,
 	frequency: PropTypes.string.isRequired,
 	success: PropTypes.func.isRequired,
 	user: PropTypes.shape({
@@ -541,6 +539,6 @@ BraintreePaymentFormComponent.defaultProps = {
 	isSandbox: false
 };
 
-const BraintreePaymentForm = connect(null, null)(BraintreePaymentFormComponent);
+const BraintreePaymentForm = BraintreePaymentFormComponent;
 
 export default scriptLoader("https://www.paypalobjects.com/api/checkout.js")(BraintreePaymentForm);

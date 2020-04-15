@@ -1,7 +1,7 @@
 // in src/accounts.js
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { Button } from "@material-ui/core";
+import { Button, ButtonGroup } from "@material-ui/core";
 import MuiToolbar from "@material-ui/core/Toolbar";
 import {
 	List,
@@ -15,25 +15,28 @@ import {
 	Filter,
 	Responsive,
 	SimpleList,
-	DeleteButton,
 	SelectInput,
 	ArrayInput,
-	showNotification,
+	showNotification as showNotificationAction,
 	startUndoable as startUndoableAction,
 	SaveButton,
-	refreshView as refreshViewAction,
-	TopToolbar
+	refreshView as refreshViewAction
 } from "react-admin";
 // import { SaveButton } from "ra-ui-materialui/lib/button";
 // import { refreshView as refreshViewAction } from "ra-core";
 import { accountAddUser } from "sagas/accountUserSaga";
-import { subscriptionUpdate, subscriptionDelete, subscriptionGetPlans } from "sagas/subscriptionSaga";
+import {
+	subscriptionUpdate as subscriptionUpdateAction,
+	subscriptionDelete as subscriptionDeleteAction,
+	subscriptionGetPlans as subscriptionGetPlansAction
+} from "sagas/subscriptionSaga";
 import BraintreeWrapper from "components/atoms/BraintreeWrapper";
 import PaymentMethodField from "components/atoms/PaymentMethodField";
 import CostField from "components/atoms/CostField";
 import PlainTextField from "components/atoms/PlainTextField";
 import AccountUserIterator from "components/molecules/AccountUserIterator";
 import countries from "common/countries.json";
+import TableViewCell from "components/atoms/TableViewCell";
 
 export const AccountTitle = () => <span>Account</span>;
 
@@ -65,16 +68,6 @@ const AccountFilter = (props) => (
 	</Filter>
 );
 
-
-const AccountEditActions = ({
-	basePath, data
-}) => (
-	<TopToolbar>
-		{ data && data.subscription && data.subscription.status !== "Active" && <DeleteButton basePath={basePath} record={data} resource="accounts" /> }
-	</TopToolbar>
-);
-
-
 const AccountToolbar = (props) => {
 	const { handleSubmitWithRedirect } = props;
 	return (
@@ -98,15 +91,17 @@ const AccountEditClass = (props) => {
 	const user = localStorage.user && JSON.parse(localStorage.user);
 	const isAdminUser = (user && user.role === "admin");
 	const [showUpdatePayment, setUpdatePayment] = useState(false);
-	const [frequency, setFrequency] = useState("monthly");
-	const costRef = useRef();
+	const [frequency, _setFrequency] = useState("monthly");
 
 	const {
 		form,
 		admin,
 		match,
 		plan,
-		subscriptionGetPlans
+		subscriptionGetPlans,
+		showNotification,
+		subscriptionUpdate,
+		subscriptionDelete
 	} = props;
 
 	useEffect(() => {
@@ -126,7 +121,31 @@ const AccountEditClass = (props) => {
 		}, 10);
 	};
 
+	const setFrequency = (ev) => {
+		const button = ev.target.tagName === "SPAN" ? ev.target.parentNode : ev.target;
+		_setFrequency(button.dataset.frequency);
+	};
+
+	const sanitizeEditProps = ({
+		registrationObj,
+		// eslint-disable-next-line no-shadow
+		accountAddUser,
+		// eslint-disable-next-line no-shadow
+		subscriptionGetPlans,
+		// eslint-disable-next-line no-shadow
+		subscriptionUpdate,
+		// eslint-disable-next-line no-shadow
+		subscriptionDelete,
+		// eslint-disable-next-line no-shadow
+		showNotification,
+		subscriptionPlanObj,
+		passwordResetObj,
+		refreshView,
+		...rest
+	}) => rest;
+
 	const account = admin.resources.accounts.data[decodeURIComponent(match.params.id)];
+
 	const subscription = (account && account.subscription) || {};
 	const numberOfUsers = ((subscription
 		&& subscription.addOns
@@ -137,12 +156,10 @@ const AccountEditClass = (props) => {
 		&& !showUpdatePayment
 		&& numberOfUsers !== account.users.length);
 
-		subscription.status = "Active"
-console.log(costRef.current)
 	return (
 		<>
-			<Edit key="account" title={<AccountTitle />} actions={<AccountEditActions isAdminUser={isAdminUser} />} {...props}>
-				<SimpleForm autoComplete="nope" toolbar={<AccountToolbar redirect={null} account={account} subscriptionUpdate={subscriptionUpdate} />}>
+			<Edit title={<AccountTitle />} {...sanitizeEditProps(props)}>
+				<SimpleForm autoComplete="off" toolbar={<AccountToolbar redirect={null} account={account} subscriptionUpdate={subscriptionUpdate} />}>
 					{ isAdminUser && <TextInput disabled source="id" /> }
 					<TextInput label="Company Name" source="name" />
 					<TextInput label="Contact Email" source="contactEmail" />
@@ -165,9 +182,7 @@ console.log(costRef.current)
 						optionValue="title"
 					/>
 
-					<h3 key="users-title">Users:</h3>
-
-					<ArrayInput source="users">
+					<ArrayInput source="users" label="Users">
 						<AccountUserIterator disableAdd>
 							<TextInput disabled label=" " source="email" style={{ display: "inline-block", width: "250px" }} fullWidth />
 							<SelectInput
@@ -201,105 +216,113 @@ console.log(costRef.current)
 						fullWidth
 					/>
 					<Button
-						raised={false}
 						color="primary"
+						variant="outlined"
 						key="add-user-button"
 						onClick={() => addUserEmail(document.getElementById("add-email-field").value)}
-						style={{ display: "inline-block", margin: "10px" }}
 					>
 						Add User
 					</Button>
 
-				</SimpleForm>
-
-			</Edit>
-			<Edit key="subscription" title="Subscription" actions={null} {...props} style={{ paddingTop: "50px" }}>
-				<SimpleForm autoComplete="nope" account={account} toolbar={null}>
-					{(subscription
+					{((subscription
 				&& (subscription.status === "Active" || subscription.status === "Pending")
-				&& (/* (
-					<>
-						<TextField key="subscription.status" label="Status" source="subscription.status" style={{ display: "inline-block" }} />
-						<Button
-							key="cancel-btn"
-							onClick={() => startUndoableAction(props.subscriptionDelete(account))}
-							style={{
-								color: "#f44336", display: "inline-block", margin: "10px", marginTop: "20px"
-							}}
-							raised={false}
-						>
-							CANCEL
-						</Button>
-						<PlainTextField key="no-of-users" label="Number of users" text={numberOfUsers.toString()} />
-						<TextField key="subscription.nextBillingDate" label="Next Payment Date" source="subscription.nextBillingDate" />
-						<TextField key="subscription.nextBillingPeriodAmount" label="Next Payment Amount" source="subscription.nextBillingPeriodAmount" />
-						<PaymentMethodField key="last-payment-method" label="Last Payment Method" subscription={subscription} style={{ display: "inline-block", width: "256px" }} />
-						<Button
-							raised={false}
-							key="updatePayment"
-							color="primary"
-							onClick={() => setUpdatePayment(!showUpdatePayment)}
-							style={{ display: "inline-block", margin: "10px", marginTop: "20px" }}
-						>
-							{showUpdatePayment ? "Hide" : "Change"}
-						</Button>
-						{/*showUpdatePayment
-						&& ((
-							<BraintreePaymentForm
-								submitButtonText="Update Payment Method"
-								key="braintree-dropin-update"
-								currency="GBP"
-								success={() => {
-									showNotification("Update payment successful");
-									setTimeout(() => {
-										refreshViewAction();
-									}, 1000);
-								}}
-								failure={(err) => {
-									console.warn(err);
-									showNotification("Update payment failed.", "warning");
-								}}
-							/>
-						) || null)
-						{usersChanged
-						&& ((
-							<CostField
-								key="cost-field"
-								label="Updated Cost"
-								source="frequency"
-								plans={plan}
-							/>
-						)
-						|| null)}
-						{usersChanged
-						&& ((
+				&& (
+					<TableViewCell caption="SUBSCRIPTION">
+						<TableViewCell>
+							<ButtonGroup fullWidth>
+								<PlainTextField label="Status" text={subscription.status} />
+								<Button
+									key="cancel-btn"
+									onClick={() => startUndoableAction(subscriptionDelete(account))}
+									variant="outlined"
+									color="secondary"
+								>
+									CANCEL
+								</Button>
+							</ButtonGroup>
+						</TableViewCell>
+						<TableViewCell>
+							<PlainTextField label="Number of users" text={numberOfUsers.toString()} />
+							<PlainTextField label="Next Payment Date" text={subscription.nextBillingDate} />
+							<PlainTextField klabel="Next Payment Amount" text={subscription.nextBillingPeriodAmount} />
+							<PaymentMethodField key="last-payment-method" label="Last Payment Method" subscription={subscription} style={{ display: "inline-block", width: "256px" }} />
 							<Button
-								key="subscription-update"
-								variant="contained"
+								key="updatePayment"
 								color="primary"
-								onClick={() => subscriptionUpdate(account)}
-								raised={false}
+								onClick={() => setUpdatePayment(!showUpdatePayment)}
+								variant="outlined"
 							>
-								Update
+								{showUpdatePayment ? "Hide" : "Change"}
 							</Button>
+							{showUpdatePayment
+							&& ((
+								<BraintreeWrapper
+									currency="GBP"
+									success={complete}
+									frequency={frequency}
+									plans={plan}
+									userData={account}
+									failure={(err) => {
+										console.warn(err);
+										showNotification("mothership_admin.subscription.failed", "warning");
+									}}
+								/>
+							) || null) }
+						</TableViewCell>
+						{usersChanged
+						&& ((
+							<TableViewCell>
+								{ plan && (
+									<CostField
+										key="cost-field"
+										label="Updated Cost"
+										frequency={frequency}
+										record={account}
+										plans={plan}
+									/>
+								)}
+								<Button
+									key="subscription-update"
+									variant="contained"
+									color="primary"
+									onClick={() => subscriptionUpdate(account)}
+								>
+									Update
+								</Button>
+							</TableViewCell>
 						)
 						|| null)}
-					</>
-				)
-				|| */ (
+					</TableViewCell>
+				))
+				|| (
 					<>
-						<SelectInput
-							id="frequency-input"
-							key="select-frequency"
-							label="Billing Frequency"
-							source="frequency"
-							choices={[
-								{ id: "monthly", name: "Monthly" },
-								{ id: "yearly", name: "Yearly" }
-							]}
-							onChange={(event) => setFrequency(event.target.value)}
+						<TableViewCell
+							caption="subscription"
+							border={0}
+							title={(
+								<span>
+									vPOP
+									<sup>PRO</sup>
+								</span>
+							)}
+							body={(
+								<ButtonGroup fullWidth>
+									<Button color="primary" variant={frequency === "monthly" ? "contained" : "outlined"} source="frequency" data-frequency="monthly" onClick={setFrequency}>Monthly</Button>
+									<Button color="primary" variant={frequency === "yearly" ? "contained" : "outlined"} source="frequency" data-frequency="yearly" onClick={setFrequency}>Annual</Button>
+								</ButtonGroup>
+							)}
 						/>
-						<CostField key="cost-field" label="Cost" source="frequency" plans={plan} costRef={costRef} />
+						<TableViewCell
+							caption={`${frequency === "monthly" ? "monthly" : "annual"} subscription`}
+							border={0}
+							title={(
+								<span>
+									vPOP
+									<sup>PRO</sup>
+								</span>
+							)}
+							body={plan && <CostField key="cost-field" label="Cost" frequency={frequency} record={account} plans={plan} />}
+						/>
 						{ plan && (
 							<BraintreeWrapper
 								currency="GBP"
@@ -311,30 +334,26 @@ console.log(costRef.current)
 									console.warn(err);
 									showNotification("mothership_admin.subscription.failed", "warning");
 								}}
-							/>)}
+							/>
+						)}
 					</>
-				))
-					)}
+				))}
 				</SimpleForm>
 			</Edit>
 		</>
 	);
 };
 
-const mapStateToProps = (state) => {
-	console.log(state)	
-	return { ...state, plan: state.subscriptionPlanObj };
-};
+const mapStateToProps = (state) => ({ ...state, plan: state.subscriptionPlanObj });
 
 export const AccountEdit = connect(mapStateToProps,
 	{
-		showNotification,
 		accountAddUser,
-		subscriptionGetPlans,
-		subscriptionUpdate,
-		subscriptionDelete,
-		refreshViewAction,
-
+		subscriptionGetPlans: subscriptionGetPlansAction,
+		subscriptionUpdate: subscriptionUpdateAction,
+		subscriptionDelete: subscriptionDeleteAction,
+		refreshView: refreshViewAction,
+		showNotification: showNotificationAction
 	})(AccountEditClass);
 
 

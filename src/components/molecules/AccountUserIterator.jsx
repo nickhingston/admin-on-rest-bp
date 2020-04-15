@@ -53,7 +53,7 @@ const styles = (theme) => ({
 		paddingTop: "1.3em",
 	},
 	leftIcon: {
-		marginRight: theme.spacing.unit,
+		marginRight: theme.spacing(1),
 	},
 });
 

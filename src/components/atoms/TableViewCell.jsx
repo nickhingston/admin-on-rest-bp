@@ -86,7 +86,7 @@ const TableViewCell = (props) => {
 			</div>
 			{
 				children
-				&& <div className="">{ children }</div>
+				&& <div className={styles.children}>{ children }</div>
 			}
 		</div>
 	);

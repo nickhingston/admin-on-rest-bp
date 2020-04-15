@@ -29,5 +29,24 @@
 }
 
 .headline {
-	color: #fff;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 600;
+	line-height: 24px;
+	color: #000;
+	font: -apple-system-headline;
+
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.headline sup {
+	font-size: 50%;
+	vertical-align: 7px;
+	color: #D64FAF;
+}
+
+.children {
+	display: flex;
+	flex-direction: column;
 }

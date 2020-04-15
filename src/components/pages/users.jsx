@@ -32,9 +32,6 @@ import { withStyles } from "@material-ui/core/styles";
 import { unparse as convertToCSV } from "papaparse/papaparse.min";
 import { get } from "lodash";
 
-
-import BraintreePaymentForm from "components/atoms/BraintreePaymentForm";
-
 const validateUserSave = (val) => {
 	const values = val;
 	const errors = {};
@@ -247,15 +244,6 @@ export const UserEdit = (props) => {
 						]}
 					/>
 				) }
-				{ false && !account && (
-					<BraintreePaymentForm
-						currency="GBP"
-						total="12.50"
-						success={(a) => {
-							console.log("complete:", a);
-						}}
-					/>
-				)}
 			</SimpleForm>
 		</Edit>
 	);

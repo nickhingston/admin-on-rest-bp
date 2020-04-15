@@ -26,7 +26,9 @@ const BraintreeWrapper = (props) => {
 		countryName
 	} = contactAddress;
 
-	const countryDetails = Object.values(countries).find((value) => value.title === countryName );
+	const countryDetails = countryName
+		? Object.values(countries).find((value) => value.title === countryName)
+		: null;
 	const foundCountryCode = countryDetails ? countryDetails.key : "";
 
 	const billingDetails = {
@@ -66,9 +68,11 @@ const BraintreeWrapper = (props) => {
 	if (planType) {
 		const planCost = planType.plan.price;
 		const addOnCost = planType.addOn.amount;
-		total = `${parseFloat(planCost) + (userData.users.length - 1) * parseFloat(addOnCost)}`;
+		total = Math.round(
+			(parseFloat(planCost) + (userData.users.length - 1) * parseFloat(addOnCost)) * 100
+		) / 100;
 	}
-console.log(total)
+
 	return (
 		<BraintreePaymentForm
 			user={user}
